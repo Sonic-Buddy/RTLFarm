@@ -1,0 +1,454 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fontAwsome="clr-namespace:FontAwesome" 
+             Shell.FlyoutBehavior="Disabled"
+             Shell.NavBarIsVisible="False"
+             x:Name="MyAdminAccess"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit" 
+             xmlns:viewmodels="clr-namespace:RTLFarm.ViewModels.AdminVM"
+             x:Class="RTLFarm.Views.AdminView.AdSettingPage">
+
+    <ContentPage.BindingContext>
+        <viewmodels:AdSettingViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <xct:ItemTappedEventArgsConverter x:Key="IPTappedEventargsConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding RefreshCommand}"/>
+    </ContentPage.Behaviors>
+
+    <ContentPage.Content>
+        <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <xct:TabView TabStripPlacement="Top" 
+                                 TabStripBackgroundColor="Transparent"
+                                 TabStripHeight="40" 
+                                 TabIndicatorColor="{DynamicResource Primary}" 
+                                 TabContentBackgroundColor="Transparent"                         
+                                 IsSwipeEnabled="False" 
+                                 IsTabTransitionEnabled="False">
+                        <xct:TabViewItem Icon="{x:Static fontAwsome:FontAwesomeIcons.Save}"
+                                         BadgeBorderColor="Black" 
+                                         Text="INTERNET CONFIG" 
+                                         FontAttributes="Bold" 
+                                         TextColor="{DynamicResource Pastel Orange}" 
+                                         TextColorSelected="{DynamicResource Pastel Orange}" 
+                                         FontSize="12">
+                            <xct:TabViewItem.Content>
+                                <ScrollView>
+                                    <StackLayout  Padding="5" VerticalOptions="FillAndExpand" Margin="5,0">
+                                        <Frame  Padding="5,3" HasShadow="True" CornerRadius="8" BackgroundColor="Transparent" BorderColor="Black" Margin="2">
+                                            <xct:Expander IsExpanded="True" Margin="3,0" BackgroundColor="Transparent">
+                                                <xct:Expander.Header>
+                                                    <StackLayout Orientation="Horizontal" Margin="10,5" BackgroundColor="Transparent" Padding="5">
+                                                        <Label Text="IP ADDRESS" FontAttributes="Bold" FontSize="Medium" TextColor="Black" />
+                                                        <Label Text="{x:Static fontAwsome:FontAwesomeIcons.ChevronDown}" FontFamily="FS" TextColor="Gray" FontAttributes="Bold" FontSize="Medium"  HorizontalOptions="EndAndExpand"/>
+                                                    </StackLayout>
+                                                </xct:Expander.Header>
+                                                <StackLayout Margin="0" Padding="0">
+                                                    <Frame VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="0" Padding="10,0" BorderColor="Black" BackgroundColor="Transparent" IsVisible="{Binding IsNotEnteraddress}">
+                                                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                                                            <Label Text="http://" FontAttributes="Bold" FontSize="Default" TextColor="Black" VerticalOptions="Center" HorizontalOptions="Center"/>
+                                                            <Entry Text="{Binding EnterAddress}"
+                               TextColor="Black"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center"
+                               HorizontalOptions="FillAndExpand"
+                               Margin="0"
+                               FontSize="Default"
+                               FontAttributes="Bold"/>
+                                                            <Label Text=":" FontAttributes="Bold" FontSize="Default" TextColor="Black" VerticalOptions="Center" HorizontalOptions="Center"/>
+                                                            <Entry Text="{Binding EnterPORT}"
+                               TextColor="Black"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Start"
+                               HorizontalOptions="Fill"
+                               WidthRequest="100"
+                               Margin="0"
+                               FontSize="Default"
+                               FontAttributes="Bold"/>
+                                                        </StackLayout>
+                                                    </Frame>
+                                                    <Frame VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="0" Padding="10,0" BorderColor="Black" BackgroundColor="Transparent" IsVisible="{Binding IsEnteraddress}">
+                                                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Margin="0" Padding="0" Spacing="0">
+                                                            <Label Text="http://" FontAttributes="Bold" FontSize="Default" TextColor="Black" VerticalOptions="Center" HorizontalOptions="Center"/>
+                                                            <Entry Text="{Binding EnterP1}"
+                               TextColor="Black"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center"
+                               MaxLength="3" 
+                               HorizontalOptions="FillAndExpand" 
+                               Margin="0"
+                               FontSize="Default"
+                               FontAttributes="Bold"/>
+                                                            <Label Text="." FontAttributes="Bold" Margin="0" TextColor="Black" FontSize="Default" VerticalOptions="Center" WidthRequest="3" HorizontalOptions="Center"/>
+                                                            <Entry Text="{Binding EnterP2}" 
+                               TextColor="Black"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center"
+                               MaxLength="3" 
+                               HorizontalOptions="FillAndExpand" 
+                               Margin="0"
+                               FontSize="Default"
+                               FontAttributes="Bold"/>
+                                                            <Label Text="." FontAttributes="Bold" Margin="0" TextColor="Black" VerticalOptions="Center" HorizontalOptions="Center"/>
+                                                            <Entry Text="{Binding EnterP3}"
+                               TextColor="Black"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center"
+                               MaxLength="3" 
+                               HorizontalOptions="FillAndExpand" 
+                               Margin="0"
+                               FontSize="Default"
+                               FontAttributes="Bold"/>
+                                                            <Label Text="." FontAttributes="Bold" Margin="0" TextColor="Black" VerticalOptions="Center" HorizontalOptions="Center"/>
+                                                            <Entry Text="{Binding EnterP4}"
+                               TextColor="Black"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center"
+                               MaxLength="3" 
+                               HorizontalOptions="FillAndExpand" 
+                               Margin="0"
+                               FontSize="Default"
+                               FontAttributes="Bold"/>
+                                                            <Label Text=":" FontAttributes="Bold" Margin="0" TextColor="Black" VerticalOptions="Center" HorizontalOptions="Center"/>
+                                                            <Entry Text="{Binding EnterPORT}" 
+                               TextColor="Black"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Start"
+                               HorizontalOptions="Fill"
+                               WidthRequest="50"
+                               Margin="0"
+                               FontSize="Default"
+                               FontAttributes="Bold"/>
+                                                        </StackLayout>
+                                                    </Frame>
+                                                    <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
+                                                        <Button Text="CHANGE" 
+                            HorizontalOptions="FillAndExpand" 
+                            FontSize="Micro"
+                            FontAttributes="Bold"
+                            CornerRadius="5" Padding="3, 0" Margin="0"
+                            BackgroundColor="White" 
+                            BorderColor="{DynamicResource Primary}"
+                            BorderWidth="1"
+                            IsVisible="{Binding IsEnteraddress}"
+                            TextColor="{DynamicResource Primary}"
+                            Command="{Binding IsChangeIPCommand}">
+                                                            <Button.ImageSource>
+                                                                <FontImageSource FontFamily="FS" Size="Small" Glyph="{x:Static fontAwsome:FontAwesomeIcons.Sync}" Color="{DynamicResource Primary}"/>
+                                                            </Button.ImageSource>
+                                                        </Button>
+
+                                                        <Button Text="CHANGE" 
+                            HorizontalOptions="FillAndExpand" 
+                            CornerRadius="5" Padding="3, 0" Margin="0"
+                            FontSize="Micro"
+                            FontAttributes="Bold"
+                            BackgroundColor="White" 
+                            BorderColor="{DynamicResource Primary}"
+                            BorderWidth="1"
+                            IsVisible="{Binding IsNotEnteraddress}"
+                            TextColor="{DynamicResource Primary}"
+                            Command="{Binding IsNotChangeIPCommand}">
+                                                            <Button.ImageSource>
+                                                                <FontImageSource FontFamily="FS" Size="Small" Glyph="{x:Static fontAwsome:FontAwesomeIcons.Sync}" Color="{DynamicResource Primary}"/>
+                                                            </Button.ImageSource>
+                                                        </Button>
+                                                        <Button Text="INSERT ADDRESS"
+                                                                HorizontalOptions="FillAndExpand"
+                                                                VerticalOptions="CenterAndExpand"
+                            CornerRadius="5" Padding="3,1" Margin="0"
+                            FontSize="Micro"
+                            FontAttributes="Bold"
+                            BackgroundColor="White" 
+                            BorderColor="LimeGreen"
+                            BorderWidth="1"
+                            TextColor="LimeGreen"
+                            Command="{Binding AddIPCommand}">
+                                                            <Button.ImageSource>
+                                                                <FontImageSource FontFamily="FS" Size="Small" Glyph="{x:Static fontAwsome:FontAwesomeIcons.Plus}" Color="LimeGreen"/>
+                                                            </Button.ImageSource>
+                                                        </Button>
+                                                    </StackLayout>
+
+                                                    <Frame BackgroundColor="#00A6FF" HasShadow="True" Padding="5" Margin="0" HorizontalOptions="Start">
+                                                        <Label Text="IP ADDRESS LIST" FontAttributes="Bold" FontSize="Medium" TextColor="White" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
+                                                    </Frame>
+                                                    <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="0" Padding="0">
+                                                        <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshIPCommand}" Padding="0" Margin="0">
+                                                            <CollectionView ItemsSource="{Binding IP_List}"
+                                        SelectionMode="Single"
+                                        SelectedItem="{Binding SelectIP}"
+                                        BackgroundColor="#f2f2f2"
+                                        HeightRequest="450"
+                                        SelectionChangedCommand="{Binding SetupCommand}" Margin="0">
+                                                                <CollectionView.Header>
+                                                                    <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource Primary}" Padding="10">
+                                                                        <Label Text="IP ADDRESS"  TextColor="Black" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand" Margin="15,0,0,0"/>
+                                                                        <Label Text="Is USED" TextColor="Black" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Margin="0,0,10,0" />
+                                                                    </StackLayout>
+                                                                </CollectionView.Header>
+                                                                <CollectionView.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <SwipeView Padding="5" BackgroundColor="Transparent">
+                                                                            <SwipeView.LeftItems>
+                                                                                <SwipeItems Mode="Execute">
+                                                                                    <SwipeItem Text="Delete" BackgroundColor="Red" Command="{Binding Source={x:Reference MyAdminAccess}, Path=BindingContext.DeleteIPCommand}" CommandParameter="{Binding .}"/>
+                                                                                </SwipeItems>
+                                                                            </SwipeView.LeftItems>
+                                                                            <StackLayout Margin="0,0.5">
+                                                                                <Frame Padding="3" Margin="2" BackgroundColor="#e3e3e3" CornerRadius="8">
+                                                                                    <StackLayout BackgroundColor="Transparent" Orientation="Horizontal" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                                                                                        <Label Text="{Binding IP_Address}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand"/>
+                                                                                        <CheckBox IsChecked="{Binding Is_Use}" IsEnabled="False" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Color="{DynamicResource Primary}" />                                                                                        
+                                                                                    </StackLayout>
+                                                                                </Frame>
+                                                                            </StackLayout>
+                                                                        </SwipeView>
+                                                                    </DataTemplate>
+                                                                </CollectionView.ItemTemplate>
+                                                            </CollectionView>
+                                                        </RefreshView>
+                                                    </StackLayout>
+                                                </StackLayout>
+                                            </xct:Expander>
+                                        </Frame>
+                                    </StackLayout>
+                                </ScrollView>                                
+                            </xct:TabViewItem.Content>
+                        </xct:TabViewItem>
+                        <!-- User logs Area -->
+                        <xct:TabViewItem Icon="{x:Static fontAwsome:FontAwesomeIcons.QuestionCircle}"
+                                         Text="USER LOGS"
+                                         FontAttributes="Bold"
+                                         TextColor="ForestGreen"
+                                         TextColorSelected="ForestGreen"
+                                         FontSize="12">
+                            <xct:TabViewItem.Content>
+                                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="5,0" Padding="0">
+                                    <Frame Padding="10,0" BorderColor="Gray" Margin="5,0" >
+                                        <StackLayout Orientation="Horizontal">
+                                           <!-- For sort Area -->
+                                        </StackLayout>
+                                    </Frame>
+                                    <RefreshView IsRefreshing="{Binding IsRefreshLogs}" Command="{Binding RefreshLogsCommand}" Margin="0" Padding="0">
+                                        <CollectionView ItemsSource="{Binding Userlogs_List}"
+                        SelectionMode="Single"
+                        x:Name="UserlogsList"
+                        RemainingItemsThreshold="1"
+                        Margin="0">
+                                            <CollectionView.EmptyView>
+                                                <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Padding="0,10" >
+                                                    <Image Source="noData.png" Aspect="AspectFill" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                                </StackLayout>
+                                            </CollectionView.EmptyView>                                            
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackLayout Margin="0,1">
+                                                        <Frame HasShadow="True" BorderColor="LightBlue" CornerRadius="10" Padding="10">
+                                                            <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="0" Padding="0">
+                                                                <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="0" Padding="0">
+                                                                    <Label Text="{Binding Trans_Type}" TextColor="Black" FontSize="Header" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand"></Label>
+                                                                    <Label Text="{Binding Trans_Create,StringFormat='{0:MM-dd-yyyy hh:mm:ss tt}'}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand"></Label>
+                                                                </StackLayout>
+                                                                <Label Text="{Binding Acc_Code}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                                <Label Text="{Binding Trans_Desc}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                            </StackLayout>
+                                                        </Frame>
+                                                    </StackLayout>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                    </RefreshView>
+                                </StackLayout>
+                            </xct:TabViewItem.Content>
+                        </xct:TabViewItem>
+                        <xct:TabViewItem Icon="{x:Static fontAwsome:FontAwesomeIcons.QuestionCircle}"
+                                         Text="TRANSACTION"
+                                         FontAttributes="Bold"
+                                         TextColor="ForestGreen"
+                                         TextColorSelected="ForestGreen"
+                                         FontSize="12">
+                            <xct:TabViewItem.Content>
+                                <ScrollView>
+                                    <StackLayout  HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="0" Padding="0">
+                                        <Frame HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="0" Padding="3" HasShadow="True">
+                                            <StackLayout Margin="0" Padding="0">
+                                                <Grid VerticalOptions="Center" ColumnDefinitions="*,2,*,2,*" Margin="0" Padding="0">
+                                                    <Frame BackgroundColor="White"
+                                                           Grid.Row="0"
+                                                           Grid.Column="0"
+                                                           Padding="0"
+                                                           Margin="0,0,5,0"
+                                                           HeightRequest="45"
+                                                           CornerRadius="15"
+                                                           HasShadow="True"
+                                                           BorderColor="DarkGray"
+                                                           HorizontalOptions="FillAndExpand">
+                                                        <Label FontFamily="FS"
+                                                               TextColor="{DynamicResource Primary}"
+                                                               HorizontalTextAlignment="Center"
+                                                               VerticalTextAlignment="Center"
+                                                               FontAttributes="Bold">
+                                                            <Label.FormattedText>
+                                                                <FormattedString>
+                                                                    <Span Text="{x:Static fontAwsome:FontAwesomeIcons.Download}"/>
+                                                                    <Span Text=" GATEPASS"/>
+                                                                </FormattedString>
+                                                            </Label.FormattedText>
+                                                        </Label>
+                                                        <Frame.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding OrderUpCommand}"/>
+                                                        </Frame.GestureRecognizers>
+                                                    </Frame>
+                                                    <BoxView Grid.Row="0" Grid.Column="1"  BackgroundColor="{DynamicResource Primary}"></BoxView>
+                                                    <Frame BackgroundColor="White"
+                                                           Grid.Row="0"
+                                                           Grid.Column="2"
+                                                           Padding="0"
+                                                           Margin="0,0,5,0"
+                                                           HeightRequest="45"
+                                                           CornerRadius="15"
+                                                           HasShadow="True"
+                                                           BorderColor="DarkGray"
+                                                           HorizontalOptions="FillAndExpand">
+                                                        <Label FontFamily="FS"
+                                                               TextColor="{DynamicResource Primary}"
+                                                               HorizontalTextAlignment="Center"
+                                                               VerticalTextAlignment="Center"
+                                                               FontAttributes="Bold">
+                                                            <Label.FormattedText>
+                                                                <FormattedString>
+                                                                    <Span Text="{x:Static fontAwsome:FontAwesomeIcons.Download}"/>
+                                                                    <Span Text=" OUTLET"/>
+                                                                </FormattedString>
+                                                            </Label.FormattedText>
+                                                        </Label>
+                                                        <Frame.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding OutletUpCommand}"/>
+                                                        </Frame.GestureRecognizers>
+                                                    </Frame>
+                                                    <BoxView Grid.Row="0" Grid.Column="3" BackgroundColor="{DynamicResource Primary}"></BoxView>
+                                                    <Frame BackgroundColor="White"
+                                                           Grid.Row="0"
+                                                           Grid.Column="4"
+                                                           Padding="3"
+                                                           Margin="0,0,5,0"
+                                                           HeightRequest="45"
+                                                           CornerRadius="8"
+                                                           HasShadow="True"
+                                                           BorderColor="DarkGray"
+                                                           HorizontalOptions="FillAndExpand">
+                                                        <Picker Title="SELECT USER"
+                                                                ItemsSource="{Binding TunUser_List}"
+                                                                ItemDisplayBinding="{Binding User}"
+                                                                SelectedItem="{Binding SelectUser_List}"
+                                                                TitleColor="Black"
+                                                                Margin="0"
+                                                                FontSize="Small"
+                                                                FontAttributes="Bold"
+                                                                HorizontalOptions="FillAndExpand"/>
+                                                        
+                                                    </Frame>
+                                                </Grid>
+                                            </StackLayout>
+                                        </Frame>
+                                        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="5,0" Padding="0">
+                                            <Frame Padding="10,0" BorderColor="Gray" Margin="5,0" >
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label Text="{x:Static fontAwsome:FontAwesomeIcons.Search}" FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                                                    <Entry TextChanged="searchbox_TextChanged" FontSize="Subtitle" FontFamily="FAS" PlaceholderColor="Gray" Placeholder="Search" HorizontalOptions="FillAndExpand" FontAttributes="Bold"/>
+                                                </StackLayout>
+                                            </Frame>
+                                            <RefreshView IsRefreshing="{Binding IsRefreshTrans}" Command="{Binding RefreshTransCommand}" Margin="0" Padding="0">
+                                                <CollectionView ItemsSource="{Binding TunnelHeader_List}"
+                                                                SelectedItem="{Binding Select_TunHeader}"
+                                                                SelectionChangedCommand="{Binding SelectCommand}"
+                                                                SelectionMode="Single"
+                                                                x:Name="LoadsheetList"
+                                                                RemainingItemsThreshold="1"
+                                                                Margin="0">
+                                                    <CollectionView.EmptyView>
+                                                        <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Padding="0,10" >
+                                                            <Image Source="noData.png" Aspect="AspectFill" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                                        </StackLayout>
+                                                    </CollectionView.EmptyView>
+                                                    <CollectionView.Header>
+                                                        <StackLayout Margin="0,0,0,2">
+                                                            <Frame HasShadow="True" BorderColor="LightBlue" CornerRadius="10" BackgroundColor="#1bacf5" Padding="10">
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="Auto"></RowDefinition>
+                                                                    </Grid.RowDefinitions>
+
+                                                                    <Label Grid.Column="0" Text="LOADSHEET" TextColor="Black" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                                    <Label Grid.Column="1" Text="PRODUCTION DATE" TextColor="Black" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                                    <Label Grid.Column="2" Text="STATUS" TextColor="Black" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                                </Grid>
+                                                            </Frame>
+                                                        </StackLayout>
+                                                    </CollectionView.Header>
+                                                    <CollectionView.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <StackLayout Margin="0,1">
+                                                                <Frame HasShadow="True" BorderColor="LightBlue" CornerRadius="10" Padding="10">
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="Auto"></RowDefinition>
+                                                                        </Grid.RowDefinitions>
+
+                                                                        <Label Grid.Column="0" Grid.Row="0" Text="{Binding AndroidLoadSheet}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                                        <Label Grid.Column="1" Grid.Row="0" Text="{Binding LoadDate,StringFormat='{0:MM-dd-yyyy}'}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                                        <Label Grid.Column="2" Grid.Row="0" Text="{Binding Load_Status}" TextColor="Black" FontSize="Header" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                                    </Grid>
+                                                                </Frame>
+                                                            </StackLayout>
+                                                        </DataTemplate>
+                                                    </CollectionView.ItemTemplate>
+                                                </CollectionView>
+                                            </RefreshView>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </ScrollView>                                
+                            </xct:TabViewItem.Content>
+                        </xct:TabViewItem>
+                    </xct:TabView>
+                </StackLayout>
+                <StackLayout BackgroundColor="Transparent" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand" Padding="10,5" Margin="0" HeightRequest="55">
+                    <Button Command="{Binding LogoutCommand}" Text="LOGOUT" TextColor="White" BackgroundColor="Crimson" FontSize="Subtitle" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.SignOutAlt}"></FontImageSource>
+                        </Button.ImageSource>
+                    </Button>
+                    <!-- -->
+                    <Button Command="{Binding BtnTestCommand}" Text="TEST" TextColor="White" FontSize="Subtitle" BackgroundColor="{DynamicResource Primary}" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5"  HeightRequest="35">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.Info}"></FontImageSource>
+                        </Button.ImageSource>
+                    </Button>
+
+                </StackLayout>
+            </StackLayout>
+        </AbsoluteLayout>        
+    </ContentPage.Content>
+</ContentPage>

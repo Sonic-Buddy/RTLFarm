@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RTLFarm.Views.BuildingPage.AddLoadSheetPage"
+             Shell.NavBarIsVisible="False" Shell.FlyoutBehavior="Disabled"
+             xmlns:fontAwsome="clr-namespace:FontAwesome" 
+             xmlns:viewmodels="clr-namespace:RTLFarm.ViewModels.BuildingViewModel" 
+             x:Name="MyLoadsheet"
+             BackgroundColor="{DynamicResource LMSecond}"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit">
+
+    <ContentPage.BindingContext>
+        <viewmodels:AddLoadSheetVM />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior
+      EventName="Appearing"
+      Command="{Binding RefreshCommand}"/>
+    </ContentPage.Behaviors>
+
+    <ContentPage.Content>
+        <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="{DynamicResource LMSecond}">
+            <StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1" BackgroundColor="{DynamicResource LMSecond}">
+                <!--
+                <StackLayout Orientation="Horizontal" VerticalOptions="Fill" HorizontalOptions="FillAndExpand" BackgroundColor="{DynamicResource LMSecond}">
+                    
+                    <Frame Margin="5,5,0,0" Padding="5,0,0,0" >
+    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">                            
+        <Label Text="REMEMBER ME" FontFamily="FS" TextColor="Gray" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+        <CheckBox VerticalOptions="CenterAndExpand" HorizontalOptions="End"/>
+    </StackLayout>
+</Frame>                   
+                </StackLayout> 
+                        -->
+                <!-- -->
+
+                <Frame Margin="5,0" Padding="10,5" BackgroundColor="Transparent" HasShadow="True" BorderColor="{DynamicResource Secondary}">
+                    <StackLayout Orientation="Horizontal" BackgroundColor="Transparent">
+                        <Label Text="PRODUCTION DATE :" FontFamily="FS" TextColor="Gray" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                        <DatePicker Date="{Binding Production_Date}" Format="M" TextColor="{DynamicResource DMSecond}" FontAttributes="Bold" FontSize="Subtitle"  VerticalOptions="Start" HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+                </Frame>
+                <Frame Margin="5,0" Padding="10,5" BackgroundColor="Transparent" HasShadow="True" BorderColor="{DynamicResource Secondary}">
+                    <StackLayout Orientation="Horizontal" BackgroundColor="Transparent">
+                        <Label Text="SUB CODE: " FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                        <Label Text="{Binding Loadsheet_Code}" FontFamily="FS" TextColor="Black" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Margin="5" Padding="5,0,0,0" BackgroundColor="Transparent" HasShadow="True" BorderColor="{DynamicResource Secondary}">
+                    <StackLayout Orientation="Horizontal" BackgroundColor="Transparent">
+                        <Label Text="{x:Static fontAwsome:FontAwesomeIcons.ArrowAltCircleRight}" FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                        <Picker Title="SELECT STATUS"
+                                ItemsSource="{Binding StatusType_List}"
+                                ItemDisplayBinding="{Binding Egg_Code}"
+                                SelectedItem="{Binding SelectStatustype}"
+                                TitleColor="Black"
+                                Margin="0"
+                                FontSize="Title"
+                                FontAttributes="Bold"                                
+                                HorizontalOptions="FillAndExpand"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Margin="35,5,5,5" Padding="5,0,0,0" IsVisible="{Binding Is_Substatus}" BackgroundColor="Transparent" HasShadow="True" BorderColor="{DynamicResource Secondary}">
+                    <StackLayout Orientation="Horizontal" BackgroundColor="Transparent">
+                        <Label Text="{x:Static fontAwsome:FontAwesomeIcons.ArrowAltCircleRight}" FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                        <Picker Title="SELECT SUB STATUS" ItemsSource="{Binding SubStatusType_List}" ItemDisplayBinding="{Binding Egg_Desc}" SelectedItem="{Binding SelectSubStatustype}" TitleColor="Black" Margin="0" FontSize="Title" FontAttributes="Bold" HorizontalOptions="FillAndExpand"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Margin="5" Padding="5,0,0,0" BackgroundColor="Transparent" HasShadow="False" >
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="{x:Static fontAwsome:FontAwesomeIcons.Egg}" FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                        <Entry Text="{Binding Egg_Quantity}" TextChanged="OnTextChanged"  FontFamily="FAS" PlaceholderColor="Gray" Placeholder="Quantity Pieces" HorizontalOptions="FillAndExpand" FontAttributes="Bold" HorizontalTextAlignment="Center" FontSize="Title" Keyboard="Numeric" MaxLength="9" IsEnabled="{Binding IsEnable_QTY}"/>
+                        
+                        <Button Command="{Binding SaveLSCommand}" Text="ADD" TextColor="White" FontFamily="FS" Padding="5,0,0,0" Margin="3" CornerRadius="5" FontSize="Title" FontAttributes="Bold" IsEnabled="{Binding IsEnable_QTY}">
+                            <Button.ImageSource>
+                                <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.Plus}"></FontImageSource>
+                            </Button.ImageSource>
+                        </Button>
+                    </StackLayout>
+                </Frame>
+                <xct:Expander IsExpanded="True">
+                    <xct:Expander.Header>
+                        <StackLayout Orientation="Horizontal" Margin="5,0" BackgroundColor="Transparent" Padding="3">
+                            <Label Text="INFORMATION" FontAttributes="Bold" FontSize="Medium" TextColor="Black"/>
+                            <Label Text="{x:Static fontAwsome:FontAwesomeIcons.ChevronDown}" FontFamily="FS" TextColor="Gray" FontAttributes="Bold" FontSize="Medium"  HorizontalOptions="EndAndExpand"/>
+                        </StackLayout>
+                    </xct:Expander.Header>
+                    <StackLayout BackgroundColor="Transparent" Padding="3">
+                        <RefreshView IsRefreshing="{Binding IsColRefresh}" Command="{Binding ColRefreshCommand}" BackgroundColor="Transparent">
+                            <CollectionView ItemsSource="{Binding DummyTunDetails_List}"
+                                            SelectionMode="Single"                                                        
+                                            x:Name="LoadsheetList"
+                                            RemainingItemsThreshold="1"
+                                            Margin="7,15">
+                                <CollectionView.EmptyView>
+                                    <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Padding="0,10" >
+                                        <Image Source="noData.png" Aspect="AspectFill" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                    </StackLayout>
+                                </CollectionView.EmptyView>
+                                <CollectionView.Header>
+                                    <StackLayout Margin="0,0.5" BackgroundColor="Transparent">
+                                        <Frame HasShadow="True" BorderColor="{DynamicResource Secondary}" CornerRadius="10" BackgroundColor="{DynamicResource DMSecond}" Padding="10,20">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"></RowDefinition>
+                                                </Grid.RowDefinitions>
+
+                                                <Label Grid.Column="0" Text="  EGG TYPE "  TextColor="{DynamicResource LMSecond}" FontSize="Title" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand"></Label>
+                                                <Label Grid.Column="1" Text=" QUANTITY" TextColor="{DynamicResource LMSecond}" FontSize="Title" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand"></Label>
+                                            </Grid>
+                                        </Frame>
+                                    </StackLayout>
+                                </CollectionView.Header>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <SwipeView Padding="5" BackgroundColor="Transparent">
+                                            <SwipeView.LeftItems>
+                                                <SwipeItems Mode="Execute">
+                                                    <SwipeItem Text="Delete" BackgroundColor="Red" Command="{Binding Source={x:Reference MyLoadsheet}, Path=BindingContext.RemoveCommand}" CommandParameter="{Binding .}"/>
+                                                </SwipeItems>
+                                            </SwipeView.LeftItems>
+                                            <StackLayout Margin="0,0.5" BackgroundColor="Transparent">
+                                                <Frame HasShadow="True" BorderColor="{DynamicResource Secondary}" CornerRadius="10" Padding="10">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto"></RowDefinition>
+                                                        </Grid.RowDefinitions>
+
+                                                        <Label Grid.Column="0" Grid.Row="0" Text="{Binding Egg_StatType}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                                                        <Label Grid.Column="1" Grid.Row="0" Text="{Binding Egg_Qty, StringFormat=\{0:N0\}}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand"></Label>
+                                                    </Grid>
+                                                </Frame>
+                                            </StackLayout>
+                                        </SwipeView>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </RefreshView>
+                    </StackLayout>
+                </xct:Expander>
+
+                <StackLayout BackgroundColor="Transparent" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand" Padding="10,2" Margin="0" HeightRequest="55">
+                    <Button Command="{Binding ClosedCommand}" Text="BACK" TextColor="White" FontSize="Subtitle" BackgroundColor="Crimson" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.ArrowAltCircleLeft}"></FontImageSource>
+                        </Button.ImageSource>
+                    </Button>
+                    <Button Command="{Binding CompletedCommand}" Text="COMPLETED" FontSize="Subtitle" TextColor="White" BackgroundColor="ForestGreen" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.Save}"></FontImageSource>
+                        </Button.ImageSource>
+                    </Button>
+                </StackLayout>
+            </StackLayout>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

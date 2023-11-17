@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RTLFarm.Views.BuildingPage.LoadSheetListPage"
+             Shell.NavBarIsVisible="False" Shell.FlyoutBehavior="Disabled"
+             xmlns:fontAwsome="clr-namespace:FontAwesome" 
+             xmlns:viewmodels="clr-namespace:RTLFarm.ViewModels.BuildingViewModel" 
+             x:Name="MyLSHomepage"
+             BackgroundColor="{DynamicResource LMSecond}"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit">
+
+    <ContentPage.BindingContext>
+        <viewmodels:LoadSheetListVM />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior
+      EventName="Appearing"
+      Command="{Binding RefreshCommand}"/>
+    </ContentPage.Behaviors>
+
+    <ContentPage.Content>
+        <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent">
+            <StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1" BackgroundColor="Transparent">
+                <xct:Expander IsExpanded="True">
+                    <xct:Expander.Header>
+                        <StackLayout Orientation="Horizontal" Margin="5,0" BackgroundColor="Transparent" Padding="3">
+                            <Label Text="INFORMATION" FontAttributes="Bold" FontSize="Title" TextColor="{DynamicResource DMSecond}"/>
+                            <Label Text="{x:Static fontAwsome:FontAwesomeIcons.ChevronDown}" FontFamily="FS" TextColor="{DynamicResource Secondary}" FontAttributes="Bold" FontSize="Subtitle"  HorizontalOptions="EndAndExpand"/>
+                        </StackLayout>
+                    </xct:Expander.Header>
+                    <StackLayout BackgroundColor="Transparent" Padding="10,3">
+                        <StackLayout Orientation="Horizontal" Padding="0" Margin="0" BackgroundColor="Transparent">
+                            <Frame BorderColor="Transparent" CornerRadius="10" Padding="2" Margin="0">
+                                <Label Text="FLOCKMAN CODE :" BackgroundColor="Transparent" TextColor="{DynamicResource DMSecond}" FontSize="Subtitle" FontAttributes="Bold" Padding="0,10" Margin="0" HorizontalOptions="EndAndExpand"/>
+                            </Frame>
+                            <Frame BorderColor="Black" CornerRadius="10" Padding="1" Margin="0" HorizontalOptions="FillAndExpand">
+                                <Label Text="{Binding FLockman_Code}"  FontAttributes="Bold" TextColor="Black" VerticalOptions="CenterAndExpand" FontSize="Subtitle" HorizontalOptions="Center" />
+                            </Frame>
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal" Padding="0" Margin="0">
+                            <Frame BorderColor="Transparent" CornerRadius="10" Padding="2" Margin="0">
+                                <Label Text="FLOCKMAN NAME :" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" Padding="0,10" Margin="0" HorizontalOptions="EndAndExpand"/>
+                            </Frame>
+                            <Frame BorderColor="Black" CornerRadius="10" Padding="1" Margin="0" HorizontalOptions="FillAndExpand">
+                                <Label Text="{Binding FLockman_Name}"  FontAttributes="Bold" TextColor="Black" VerticalOptions="CenterAndExpand" FontSize="Subtitle" HorizontalOptions="Center" />
+                            </Frame>
+                        </StackLayout>
+                    </StackLayout>
+                </xct:Expander>
+
+                <StackLayout BackgroundColor="Transparent" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand" Padding="10,5" Margin="0" HeightRequest="55" WidthRequest="250">
+                    <Button Command="{Binding CreateLoadsheetCommand}" Text="CREATE LOADSHEET" FontSize="Subtitle" TextColor="White" BackgroundColor="{DynamicResource Primary}" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5"  HeightRequest="45">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.PlusCircle}"></FontImageSource>
+                        </Button.ImageSource>
+                    </Button>
+                </StackLayout>
+                
+                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent">
+                    <Frame Padding="10,0" BorderColor="Transparent" Margin="45,0,5,0" BackgroundColor="Transparent" >
+                        <StackLayout Orientation="Horizontal" BackgroundColor="Transparent">
+                            <Label Text="{x:Static fontAwsome:FontAwesomeIcons.Search}" FontFamily="FS" TextColor="{DynamicResource Resol Blue}" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                            <Entry TextChanged="searchbox_TextChanged" FontSize="Subtitle" FontFamily="FAS" PlaceholderColor="{DynamicResource Secondary}" TextColor="{DynamicResource Resol Blue}" Placeholder="Search" HorizontalOptions="FillAndExpand" FontAttributes="Bold"/>
+                        </StackLayout>
+                    </Frame>
+                    <RefreshView IsRefreshing="{Binding IsRefresh}" Command="{Binding RefreshCommand}" BackgroundColor="Transparent">
+                        <CollectionView ItemsSource="{Binding TunnelHeader_List}" SelectedItem="{Binding Select_TunHeader}" SelectionChangedCommand="{Binding SelectCommand}"
+                     SelectionMode="Single"                                                        
+                     x:Name="LoadsheetList"
+                     RemainingItemsThreshold="1"
+                                        BackgroundColor="Transparent"
+                     Margin="7,15">
+                            <CollectionView.EmptyView>
+                                <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Padding="0,10" BackgroundColor="Transparent" >
+                                    <Image Source="noData.png" Aspect="AspectFill" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                </StackLayout>
+                            </CollectionView.EmptyView>
+                            <CollectionView.Header>
+                                <StackLayout Margin="0,0,0,2" BackgroundColor="Transparent">
+                                    <Frame HasShadow="True" BorderColor="{DynamicResource Secondary}" CornerRadius="10" BackgroundColor="{DynamicResource DMSecond}" Padding="10,20">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"></RowDefinition>
+                                            </Grid.RowDefinitions>
+
+                                            <Label Grid.Column="0" Text="  LOADSHEET"  TextColor="{DynamicResource LMSecond}" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                            <Label Grid.Column="1" Text="PRODUCTION DATE" TextColor="{DynamicResource LMSecond}" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                            <Label Grid.Column="2" Text="STATUS" TextColor="{DynamicResource LMSecond}" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                        </Grid>
+                                    </Frame>
+                                </StackLayout>
+                            </CollectionView.Header>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackLayout Margin="0,1">
+                                        <Frame HasShadow="True" BorderColor="{DynamicResource Secondary}" CornerRadius="10" Padding="10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"></RowDefinition>
+                                                </Grid.RowDefinitions>
+
+                                                <Label Grid.Column="0" Grid.Row="0" Text="{Binding AndroidLoadSheet}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                <Label Grid.Column="1" Grid.Row="0" Text="{Binding LoadDate,StringFormat='{0:MM-dd-yyyy}'}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                <Label Grid.Column="2" Grid.Row="0" Text="{Binding Load_Status}" TextColor="Black" FontSize="Header" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                            </Grid>
+                                        </Frame>
+                                    </StackLayout>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </RefreshView>
+                </StackLayout>
+
+                <StackLayout BackgroundColor="Transparent" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand" Padding="10,5" Margin="0" HeightRequest="55">
+                    <Button Command="{Binding LogoutCommand}" Text="LOGOUT" TextColor="White" BackgroundColor="Crimson" FontSize="Subtitle" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.SignOutAlt}"></FontImageSource>
+                        </Button.ImageSource>
+                    </Button>
+                    
+                    <!--  -->
+                    <Button Command="{Binding SyncCommand}" Text="SYNC" TextColor="White" FontSize="Subtitle" BackgroundColor="{DynamicResource Primary}" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5"  HeightRequest="35">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.Sync}"></FontImageSource>
+                        </Button.ImageSource>
+                    </Button>
+                  
+                </StackLayout>
+            </StackLayout>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

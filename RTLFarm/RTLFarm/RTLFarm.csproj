@@ -1,0 +1,88 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <ProduceReferenceAssemblyInOutDir>true</ProduceReferenceAssemblyInOutDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Fonts\CustomFont.ttf" />
+    <None Remove="Resources\Fonts\fa_brands_400.ttf" />
+    <None Remove="Resources\Fonts\fa_regular_400.ttf" />
+    <None Remove="Resources\Fonts\fa_solid_900.ttf" />
+    <None Remove="Resources\Fonts\Font_Awesome_5_Brands_Regular_400.otf" />
+    <None Remove="Resources\Fonts\Font_Awesome_5_Free_Regular_400.otf" />
+    <None Remove="Resources\Fonts\Font_Awesome_5_Free_Solid_900.otf" />
+    <None Remove="Resources\Fonts\sanson.otf" />
+    <None Remove="Resources\Fonts\Unique.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Fonts\CustomFont.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\fa_brands_400.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\fa_regular_400.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\fa_solid_900.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\Font_Awesome_5_Brands_Regular_400.otf" />
+    <EmbeddedResource Include="Resources\Fonts\Font_Awesome_5_Free_Regular_400.otf" />
+    <EmbeddedResource Include="Resources\Fonts\Font_Awesome_5_Free_Solid_900.otf" />
+    <EmbeddedResource Include="Resources\Fonts\sanson.otf" />
+    <EmbeddedResource Include="Resources\Fonts\Unique.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Acr.UserDialogs" Version="7.2.0.564" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
+    <PackageReference Include="Rg.Plugins.Popup" Version="2.1.0" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+    <PackageReference Include="Xamarin.CommunityToolkit" Version="2.0.0" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2515" />  
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Views\AdminView\AdLoadsheetInfoPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\AdminView\AdminDialog\AdLoginDialog.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\AdminView\AdSettingPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\BuildingPage\AddLoadSheetPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\BuildingPage\LoadSheetInfoPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\BuildingPage\LoadSheetListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\DialogPage\RegisterAccountDialog.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\DialogPage\RejectDialog.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\DialogPage\UpdateDialog.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\DialogPage\UpdateLSDialog.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\DummyHomePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\HomePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\TransportPage\TransportInfoPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\TransportPage\TransportListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

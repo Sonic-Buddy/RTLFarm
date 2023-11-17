@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="RTLFarm.Views.LoginPage"
+             xmlns:fontAwsome="clr-namespace:FontAwesome" 
+             xmlns:viewmodels="clr-namespace:RTLFarm.ViewModels.UserViewModel"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             BackgroundColor="{DynamicResource LMSecond}"
+             Shell.NavBarIsVisible="False" Shell.FlyoutBehavior="Disabled">
+
+    <ContentPage.BindingContext>
+        <viewmodels:LoginVM />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior
+        EventName="Appearing"
+        Command="{Binding RefreshCommand}"/>
+    </ContentPage.Behaviors>
+
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout HorizontalOptions="FillAndExpand">
+                <Label Text="{x:Static fontAwsome:FontAwesomeIcons.UserShield}" FontFamily="FS" Margin="0" TextColor="{DynamicResource Secondary}" HorizontalOptions="End" Padding="10" FontSize="Large" FontAttributes="Bold">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AdminCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="5" Padding="20" IsVisible="{Binding IsRegistered}" BackgroundColor="Transparent">
+                    <Image Grid.Row="0" Margin="0,50,0,30" Source="ssdilogo.png" Aspect="AspectFit" HeightRequest="180" WidthRequest="80" BackgroundColor="Transparent"/>
+                    <Frame Padding="10" HorizontalOptions="FillAndExpand" CornerRadius="8" BackgroundColor="Transparent">
+                        <StackLayout HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" >
+
+                            <Label Text="RTL FARM" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" FontSize="Title"  TextColor="{DynamicResource Secondary}"/>
+                            <!-- -->
+                            <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand" BackgroundColor="Transparent">
+                                <Frame HasShadow="False" BackgroundColor="Transparent">
+                                    <Label Text="{x:Static fontAwsome:FontAwesomeIcons.User}" TextColor="{DynamicResource Primary}" FontFamily="FS" FontSize="Title" HorizontalOptions="End" Padding="5"/>
+                                </Frame>
+                                <Entry Placeholder="Username" FontFamily="FS" FontSize="Subtitle" PlaceholderColor="{DynamicResource Secondary}" Text="{Binding Username}" TextColor="{DynamicResource Primary}" Margin="0" HorizontalOptions="FillAndExpand"/>
+                            </StackLayout>
+
+                            <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand" Padding="0" BackgroundColor="Transparent">
+                                <Frame HasShadow="False" Margin="0" BackgroundColor="Transparent">
+                                    <StackLayout>
+                                        <Label Text="{x:Static fontAwsome:FontAwesomeIcons.Lock}" FontFamily="FS" FontSize="Title" HorizontalOptions="Start" Padding="5" TextColor="{DynamicResource Primary}"/>
+                                    </StackLayout>
+                                </Frame>
+                                <Entry Placeholder="**********" FontFamily="FS" FontSize="Subtitle" PlaceholderColor="{DynamicResource Secondary}" TextColor="{DynamicResource Primary}" Text="{Binding Password}"  IsPassword="{Binding IsPasshide}" Margin="0" HorizontalOptions="FillAndExpand"/>
+                                <Frame HasShadow="False">
+                                    <StackLayout>
+                                        <Label Text="{x:Static fontAwsome:FontAwesomeIcons.Eye}" FontFamily="FS" FontSize="Title" HorizontalOptions="End" Padding="5" TextColor="Gray" IsVisible="{Binding IsBtnpasshide}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SetbtnHideCommand}"/>
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                        <Label Text="{x:Static fontAwsome:FontAwesomeIcons.EyeSlash}" FontFamily="FS" FontSize="Title" HorizontalOptions="End" Padding="5" TextColor="Gray" IsVisible="{Binding IsBtnpassunhide}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SetbtnUnhideCommand}"/>
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                    </StackLayout>
+                                </Frame>
+                            </StackLayout>
+
+                            <Button Command="{Binding LoginCommand}" Text="Login" BackgroundColor="{DynamicResource Primary}" TextColor="{DynamicResource LMSecond}" CornerRadius="15" Padding="95,0,55,0" HeightRequest="45" FontAttributes="Bold" IsEnabled="{Binding IsEnable}">
+                                <Button.ImageSource>
+                                    <FontImageSource FontFamily="FS" Glyph="{x:Static fontAwsome:FontAwesomeIcons.SignInAlt}" Color="{DynamicResource LMSecond}"></FontImageSource>
+                                </Button.ImageSource>
+                            </Button>
+                            <StackLayout HorizontalOptions="End" BackgroundColor="Transparent">
+                                <Label Text="Use another account" FontAttributes="Bold" FontSize="Subtitle" TextColor="{DynamicResource Resol Blue}">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding OtherAccCommand}"/>
+                                    </Label.GestureRecognizers>
+                                </Label>
+                            </StackLayout>
+  
+                            
+                         
+    <!--      
+                            <Button Text="Delete All" Command="{Binding BtnDeleteCommand}"/>
+<Button Text="Test Button Update" Command="{Binding BtnTestCommand}"/>
+-->
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+
+                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="5" Padding="20" IsVisible="{Binding IsNotRegistered}" BackgroundColor="Transparent">
+                    <Image Grid.Row="0" Margin="0,50,0,30" Source="ssdilogo.png" Aspect="AspectFit" HeightRequest="180" WidthRequest="80" BackgroundColor="Transparent"/>
+                    <Frame Padding="10" HorizontalOptions="FillAndExpand" CornerRadius="8" BackgroundColor="Transparent">
+                        <StackLayout HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" >
+                            <Label Text="RTL FARM" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" FontSize="Title"  BackgroundColor="Transparent" TextColor="{DynamicResource Secondary}"/>
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent">
+                                <Frame HasShadow="True" Padding="5" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent">
+                                    <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand" BackgroundColor="Transparent">
+                                        <Frame HasShadow="False" BackgroundColor="Transparent">
+                                            <Label Text="{x:Static fontAwsome:FontAwesomeIcons.Mobile}" FontFamily="FS" TextColor="{DynamicResource Primary}" FontSize="Title" HorizontalOptions="End" Padding="5"/>
+                                        </Frame>
+                                        <Entry Placeholder="VERIFICATION"
+                      FontFamily="FS"
+                      FontSize="Subtitle"
+                      PlaceholderColor="{DynamicResource Secondary}"
+                      Text="{Binding Verification}"
+                      TextColor="{DynamicResource Primary}"
+                      Margin="0"
+                      HorizontalOptions="FillAndExpand"/>
+                                    </StackLayout>
+                                </Frame>
+                            </StackLayout>
+
+                            <Button Command="{Binding RegisterCommand}"
+           Text="VERIFY"
+           BackgroundColor="{DynamicResource Primary}"
+           CornerRadius="15"
+           Padding="95,0,55,0"
+           HeightRequest="45"
+           FontAttributes="Bold"
+           TextColor="{DynamicResource LMSecond}"
+           IsEnabled="{Binding IsEnable}">
+                                <Button.ImageSource>
+                                    <FontImageSource FontFamily="FS" Color="White" Glyph="{x:Static fontAwsome:FontAwesomeIcons.UnlockAlt}"></FontImageSource>
+                                </Button.ImageSource>
+                            </Button>
+
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>        
+    </ContentPage.Content>
+</ContentPage>

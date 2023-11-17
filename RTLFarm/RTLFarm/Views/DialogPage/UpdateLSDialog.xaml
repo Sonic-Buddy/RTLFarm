@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<popup:PopupPage xmlns:popup="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+                 xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:viewmodels="clr-namespace:RTLFarm.ViewModels.DialogViewModel" xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+                 CloseWhenBackgroundIsClicked="False"
+                 x:Class="RTLFarm.Views.DialogPage.UpdateLSDialog">
+
+    <popup:PopupPage.BindingContext>
+        <viewmodels:UpdateLSVM />
+    </popup:PopupPage.BindingContext>
+
+    <popup:PopupPage.Behaviors>
+        <xct:EventToCommandBehavior
+ EventName="Appearing"
+ Command="{Binding RefreshCommand}"/>
+    </popup:PopupPage.Behaviors>
+
+    <Frame HeightRequest="200" 
+WidthRequest="225" 
+VerticalOptions="CenterAndExpand" 
+HorizontalOptions="CenterAndExpand"
+BackgroundColor="White"
+CornerRadius="10"
+Padding="15">
+
+        <StackLayout HorizontalOptions="Center" 
+          VerticalOptions="Center">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackLayout HorizontalOptions="CenterAndExpand" Grid.Row="0" VerticalOptions="CenterAndExpand" Margin="0,-25,0,0">
+                    <Image Source="{Binding IconName}" IsAnimationPlaying="True" HeightRequest="250" WidthRequest="275" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                </StackLayout>
+                <StackLayout Margin="0,85,0,0">
+                    <Label Text="{Binding StaticLoadingText}"
+                           HorizontalOptions="CenterAndExpand"
+                           VerticalOptions="CenterAndExpand" TextColor="#00A6FF" FontAttributes="Bold" FontFamily="AC" FontSize="15"/>
+                </StackLayout>
+                <StackLayout Grid.Row="1" Margin="0,-50,0,0">
+                    <Label Text="{Binding LoadingText}" 
+            HorizontalOptions="CenterAndExpand"
+            VerticalOptions="CenterAndExpand" TextColor="#00A6FF" FontAttributes="Bold" FontFamily="AC" FontSize="20" />
+                </StackLayout>
+            </Grid>
+        </StackLayout>
+
+    </Frame>
+
+</popup:PopupPage>

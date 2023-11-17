@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<popup:PopupPage xmlns:popup="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+                 xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:fontAwsome="clr-namespace:FontAwesome"
+                 xmlns:xct="http://xamarin.com/schemas/2020/toolkit" 
+                 xmlns:viewmodels="clr-namespace:RTLFarm.ViewModels.AdminVM.AdminDialogVM"
+                 x:Class="RTLFarm.Views.AdminView.AdminDialog.AdLoginDialog">
+
+    <popup:PopupPage.BindingContext>
+        <viewmodels:AdLoginVM />
+    </popup:PopupPage.BindingContext>
+
+    <popup:PopupPage.Behaviors>
+        <xct:EventToCommandBehavior
+    EventName="Appearing"
+    Command="{Binding RefreshCommand}"/>
+    </popup:PopupPage.Behaviors>
+
+    <Frame HeightRequest="300" 
+       Margin="20"
+       VerticalOptions="CenterAndExpand" 
+       HorizontalOptions="FillAndExpand"
+       BackgroundColor="White"
+       CornerRadius="10"
+       Padding="15"
+       >
+        <ScrollView Margin="0" Padding="0">
+            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Margin="0" Padding="0">
+                <!--Register Data-->
+                <Label Text="AUTHORIZE ACCOUNT" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" FontSize="Title" TextColor="Black" />
+                <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand">
+                    <Frame HasShadow="False">
+                        <Label Text="{x:Static fontAwsome:FontAwesomeIcons.User}" FontFamily="FS" TextColor="Gray" FontSize="Title" HorizontalOptions="End" Padding="5"/>
+                    </Frame>
+                    <Entry Placeholder="USERNAME" FontFamily="FS" FontSize="Subtitle" PlaceholderColor="Gray" Text="{Binding AdUsername}" TextColor="{DynamicResource Primary}" Margin="0" HorizontalOptions="FillAndExpand"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand" Padding="0">
+                    <Frame HasShadow="False" Margin="0">
+                        <StackLayout>
+                            <Label Text="{x:Static fontAwsome:FontAwesomeIcons.Lock}" FontFamily="FS" FontSize="Title" HorizontalOptions="Start" Padding="5"/>
+                        </StackLayout>
+                    </Frame>
+                    <Entry Placeholder="PASSWORD" FontFamily="FS" FontSize="Subtitle" PlaceholderColor="Gray" TextColor="{DynamicResource Primary}" Text="{Binding AdPassword}"  IsPassword="{Binding IsPass_Encr}" Margin="0" HorizontalOptions="FillAndExpand"/>
+                    <Frame HasShadow="False">
+                        <StackLayout>
+                            <Label Text="{x:Static fontAwsome:FontAwesomeIcons.Eye}" FontFamily="FS" FontSize="Title" HorizontalOptions="End" Padding="5" TextColor="Gray" IsVisible="{Binding IsBtnpasshide}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetbtnHideCommand}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="{x:Static fontAwsome:FontAwesomeIcons.EyeSlash}" FontFamily="FS" FontSize="Title" HorizontalOptions="End" Padding="5" TextColor="Gray" IsVisible="{Binding IsBtnpassunhide}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetbtnUnhideCommand}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+
+                <Button Command="{Binding SigninCommand}" Text="Sign in" BackgroundColor="#00A6FF" CornerRadius="20" Padding="95,0,55,0" HeightRequest="45" FontAttributes="Bold">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="FS" Glyph="{x:Static fontAwsome:FontAwesomeIcons.SignInAlt}"></FontImageSource>
+                    </Button.ImageSource>
+                </Button>
+            </StackLayout>
+        </ScrollView>        
+    </Frame>
+
+</popup:PopupPage>

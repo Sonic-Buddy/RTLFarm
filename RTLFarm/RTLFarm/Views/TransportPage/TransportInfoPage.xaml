@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RTLFarm.Views.TransportPage.TransportInfoPage"
+             Shell.NavBarIsVisible="False" Shell.FlyoutBehavior="Disabled"
+             xmlns:fontAwsome="clr-namespace:FontAwesome" xmlns:viewmodels="clr-namespace:RTLFarm.ViewModels.TransportViewModel" xmlns:xct="http://xamarin.com/schemas/2020/toolkit">
+
+    <ContentPage.BindingContext>
+        <viewmodels:TransportInfoVM />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior EventName="Appearing" Command="{Binding RefreshCommand}"/>
+    </ContentPage.Behaviors>
+
+
+    <ContentPage.Content>
+        <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <Frame Margin="5,10,5,0" Padding="10,5">
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Label Text="LOADSHEET CODE: " FontFamily="FS" TextColor="Gray" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                        <Label Text="{Binding TunHeader.LoadNumber}" FontFamily="FS" TextColor="Black" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                    </StackLayout>
+                </Frame>
+                
+                <Frame Margin="5,0" Padding="10,5">
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Label Text="FLOCKMAN NAME: " FontFamily="FS" TextColor="Gray" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                        <Label Text="{Binding TunHeader.User}" FontFamily="FS" TextColor="Black" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Margin="5,0" Padding="10,5">
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Label Text="PRODUCTION DATE: " FontFamily="FS" TextColor="Gray" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                        <Label FormattedText="{Binding TunHeader.LoadDate, StringFormat=\{0:d\}}" FontFamily="FS" TextColor="Black" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Margin="5,0" Padding="10,5">
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Label Text="LOCATION: " FontFamily="FS" TextColor="Gray" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                        <Label Text="{Binding Building_Location}" FontFamily="FS" TextColor="Black" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Margin="5,0" Padding="10,5">
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Label Text="STATUS: " FontFamily="FS" TextColor="Gray" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                        <Label Text="{Binding TunHeader.Load_Status}" FontFamily="FS" TextColor="Black" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Margin="5,0" Padding="10,5">
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Label Text="TRUCK NUMBER: " FontFamily="FS" TextColor="Gray" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                        <Label Text="{Binding TunHeader.Plate_Number}" FontFamily="FS" TextColor="Black" FontSize="Subtitle" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                    </StackLayout>
+                </Frame>
+
+                <xct:Expander IsExpanded="True">
+                    <xct:Expander.Header>
+                        <StackLayout Orientation="Horizontal" Margin="5,0" BackgroundColor="Transparent" Padding="3">
+                            <Label Text="INFORMATION" FontAttributes="Bold" FontSize="Medium" TextColor="Black"/>
+                            <Label Text="{x:Static fontAwsome:FontAwesomeIcons.ChevronDown}" FontFamily="FS" TextColor="Gray" FontAttributes="Bold" FontSize="Medium"  HorizontalOptions="EndAndExpand"/>
+                        </StackLayout>
+                    </xct:Expander.Header>
+                    <StackLayout BackgroundColor="White" Padding="3">
+                        <RefreshView IsRefreshing="{Binding IsRefresh}" Command="{Binding RefreshCommand}">
+                            <CollectionView ItemsSource="{Binding TunnelDetails_List}"
+                        SelectionMode="Single"                                                        
+                        x:Name="LoadsheetList"
+                        RemainingItemsThreshold="1"
+                        Margin="7,15">
+                                <CollectionView.EmptyView>
+                                    <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Padding="0,10" >
+                                        <Image Source="noData.png" Aspect="AspectFill" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                    </StackLayout>
+                                </CollectionView.EmptyView>
+                                <CollectionView.Header>
+                                    <StackLayout Margin="0,0.5">
+                                        <Frame HasShadow="True" BorderColor="LightBlue" CornerRadius="10" BackgroundColor="#1bacf5" Padding="10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"></RowDefinition>
+                                                </Grid.RowDefinitions>
+
+                                                <Label Grid.Column="0" Text="  EGG TYPE "  TextColor="Black" FontSize="Title" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                                                <Label Grid.Column="1" Text=" QUANTITY (PCs)" TextColor="Black" FontSize="Title" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Padding="0,0,5,0" ></Label>
+                                            </Grid>
+                                        </Frame>
+                                    </StackLayout>
+                                </CollectionView.Header>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackLayout Margin="0,0,0,3">
+                                            <Frame HasShadow="True" BorderColor="LightBlue" CornerRadius="10" Padding="10">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"></RowDefinition>
+                                                    </Grid.RowDefinitions>
+
+                                                    <Label Grid.Column="0" Grid.Row="0" Text="{Binding Egg_StatType}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                                                    <Label Grid.Column="1" Grid.Row="0" Text="{Binding Egg_Qty, StringFormat=\{0:N0\}}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Padding="0,0,10,0" ></Label>
+                                                </Grid>
+                                            </Frame>
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                                <CollectionView.Footer>
+                                    <StackLayout Margin="0,0.5">
+                                        <Frame HasShadow="True" BorderColor="LightBlue" CornerRadius="10" BackgroundColor="Black" Padding="10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"></RowDefinition>
+                                                </Grid.RowDefinitions>
+
+                                                <Label Grid.Column="0" Text="  TOTAL EGG:"  TextColor="White" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                                                <Label Grid.Column="1" Text="{Binding GrandTotal_Egg, StringFormat=\{0:N0\}}" TextColor="Crimson" FontSize="Title" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Padding="0,0,10,0" ></Label>
+                                            </Grid>
+                                        </Frame>
+                                    </StackLayout>
+                                </CollectionView.Footer>
+                            </CollectionView>
+                        </RefreshView>
+                    </StackLayout>
+                </xct:Expander>
+
+                <StackLayout BackgroundColor="Transparent" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand" Padding="10,2" Margin="0" HeightRequest="55">
+                    <Button Command="{Binding ClosedCommand}" Text="BACK" TextColor="White" FontSize="Subtitle" BackgroundColor="Crimson" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.ArrowAltCircleLeft}"></FontImageSource>
+                        </Button.ImageSource>
+                    </Button>
+                    <Button Command="{Binding RejectCommand}" Text="REJECT" FontSize="Subtitle" TextColor="White" BackgroundColor="{DynamicResource Pastel Orange}" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5" IsVisible="{Binding Is_BtnHide}">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.ExclamationTriangle}"></FontImageSource>
+                        </Button.ImageSource>
+                    </Button>
+                    <Button Command="{Binding AcceptCommand}" Text="ACCEPT" FontSize="Subtitle" TextColor="White" BackgroundColor="ForestGreen" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5" IsVisible="{Binding Is_BtnHide}">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.CheckCircle}"></FontImageSource>
+                        </Button.ImageSource>
+                    </Button>
+                </StackLayout>
+            </StackLayout>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>
