@@ -9,6 +9,7 @@ using RTLFarm.Services;
 using RTLFarm.Views;
 using RTLFarm.Views.TransportPage;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -76,7 +77,8 @@ namespace RTLFarm.ViewModels.TransportViewModel
                     User_Checked = _drivercode
                 };
                 var _driverviewList = await _global.tunnelheader.GetSpecifictunheader(_tunheaderparam, "OnDriverView");
-                var _tundetialssortdate = _driverviewList.OrderByDescending(a => a.LoadDate).ToList();
+                var _harvestList = await GetHarvestList(_driverviewList.ToList());
+                var _tundetialssortdate = _harvestList.OrderByDescending(a => a.DateAdded).ToList();
                 TunnelHeader_List.Clear();
                 TunnelHeader_List.ReplaceRange(_tundetialssortdate);
             }
@@ -93,20 +95,26 @@ namespace RTLFarm.ViewModels.TransportViewModel
             _loading.Show();
             try
             {
+                
                 bool _response = await _global.configurationService.GetInternetConnection();
                 if (!_response)
+                {
+                    _loading.Dispose();
+                    await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsNonet, $"No internet connection", TokenCons.IsFailed);
                     return;
+                }
 
                 var _tunheaderapiList = await _global.tunnelheader.GetapiTunHeaderGenerated();
                 var _tundetailapiList = await _global.tunneldetails.GetapiTunDetailsGenerated();
-                foreach(var _itmHeader in _tunheaderapiList)
+
+                foreach (var _itmHeader in _tunheaderapiList)
                 {
                     var _isExistcount = await _global.tunnelheader.GetExistloadsheet(_itmHeader);
-                    if(_isExistcount == 0)
+                    if (_isExistcount == 0)
                     {
                         var _tunheaderModel = await _global.tunnelheader.Insert_TunnelHeader(_itmHeader);
                         var _subdetailsList = _tundetailapiList.Where(a => a.AndroidLoadSheet == _tunheaderModel.AndroidLoadSheet).ToList();
-                        foreach(var _itmDetails in _subdetailsList)
+                        foreach (var _itmDetails in _subdetailsList)
                         {
                             await _global.tunneldetails.Insert_TunnelDetails(_itmDetails);
                         }
@@ -125,11 +133,13 @@ namespace RTLFarm.ViewModels.TransportViewModel
                 await Task.Delay(2000);
 
                 await OnLoadData(User_Model.SalesmanCode);
+                await OnAddlogs(User_Model.SalesmanCode, User_Model.UserFullName, User_Model.UserRole, "Sync", $"Successfully Sync (Header count :{_tunheaderapiList.Count()})", TokenCons.IsSuccess);
                 _loading.Dispose();
             }
             catch (Exception ex)
             {
                 await _global.configurationService.MessageAlert(ex.Message);
+                await OnAddlogs(User_Model.SalesmanCode, User_Model.UserFullName, User_Model.UserRole, TokenCons.IsError, ex.Message, TokenCons.IsFailed);
                 _loading.Dispose();
                 return;
             }
@@ -195,6 +205,37 @@ namespace RTLFarm.ViewModels.TransportViewModel
 
             var route = $"/{nameof(LoginPage)}";
             await Shell.Current.GoToAsync(route);
+        }
+
+        private async Task<List<TunnelHeader>> GetHarvestList(List<TunnelHeader> _objList)
+        {
+            await Task.Delay(100);
+            var _returnList = _objList.GroupBy(a => a.AndroidLoadSheet).Select(b => new TunnelHeader
+            {
+                AGTId = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().AGTId,
+                User = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().User,
+                User_Checked = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().User_Checked,
+                Status_Checked = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().Status_Checked,
+                Plate_Number = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().Plate_Number,
+                LoadDate = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().LoadDate,
+                LoadSequence = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().LoadSequence,
+                LoadNumber = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().LoadNumber,
+                Load_Status = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().Load_Status,
+                DateAdded = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().DateAdded,
+                DateEdited = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().DateEdited,
+                UserID = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().UserID,
+                Building_Location = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().Building_Location,
+                TruckDriverName = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().TruckDriverName,
+                Override_Status = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().Override_Status,
+                CSRefNo = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().CSRefNo,
+                AndroidLoadSheet = b.Key,
+                ReasonForReject = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().ReasonForReject,
+                CancelledLoadSheet = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().CancelledLoadSheet,
+                Remarks = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().Remarks,
+                User_Code = b.Where(ba => ba.AndroidLoadSheet == b.Key).FirstOrDefault().User_Code,
+            }).ToList();
+
+            return _returnList;
         }
     }
 }

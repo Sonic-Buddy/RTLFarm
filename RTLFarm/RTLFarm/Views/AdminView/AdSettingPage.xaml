@@ -28,7 +28,7 @@
     <ContentPage.Content>
         <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
             <StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
-                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
                     <xct:TabView TabStripPlacement="Top" 
                                  TabStripBackgroundColor="Transparent"
                                  TabStripHeight="40" 
@@ -44,9 +44,9 @@
                                          TextColorSelected="{DynamicResource Pastel Orange}" 
                                          FontSize="12">
                             <xct:TabViewItem.Content>
-                                <ScrollView>
-                                    <StackLayout  Padding="5" VerticalOptions="FillAndExpand" Margin="5,0">
-                                        <Frame  Padding="5,3" HasShadow="True" CornerRadius="8" BackgroundColor="Transparent" BorderColor="Black" Margin="2">
+                                <ScrollView VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                                    <StackLayout  Padding="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="5,0">
+                                        <Frame  Padding="5,3" HasShadow="True" CornerRadius="8" BackgroundColor="Transparent" BorderColor="Black" Margin="2" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                                             <xct:Expander IsExpanded="True" Margin="3,0" BackgroundColor="Transparent">
                                                 <xct:Expander.Header>
                                                     <StackLayout Orientation="Horizontal" Margin="10,5" BackgroundColor="Transparent" Padding="5">
@@ -148,7 +148,6 @@
                                                                 <FontImageSource FontFamily="FS" Size="Small" Glyph="{x:Static fontAwsome:FontAwesomeIcons.Sync}" Color="{DynamicResource Primary}"/>
                                                             </Button.ImageSource>
                                                         </Button>
-
                                                         <Button Text="CHANGE" 
                             HorizontalOptions="FillAndExpand" 
                             CornerRadius="5" Padding="3, 0" Margin="0"
@@ -261,8 +260,9 @@
                                                                     <Label Text="{Binding Trans_Type}" TextColor="Black" FontSize="Header" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand"></Label>
                                                                     <Label Text="{Binding Trans_Create,StringFormat='{0:MM-dd-yyyy hh:mm:ss tt}'}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand"></Label>
                                                                 </StackLayout>
-                                                                <Label Text="{Binding Acc_Code}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                                <Label Text="{Binding Acc_Name}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
                                                                 <Label Text="{Binding Trans_Desc}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                                <Label Text="{Binding Logs_Code}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
                                                             </StackLayout>
                                                         </Frame>
                                                     </StackLayout>
@@ -273,6 +273,7 @@
                                 </StackLayout>
                             </xct:TabViewItem.Content>
                         </xct:TabViewItem>
+                        <!-- Transaction Area -->
                         <xct:TabViewItem Icon="{x:Static fontAwsome:FontAwesomeIcons.QuestionCircle}"
                                          Text="TRANSACTION"
                                          FontAttributes="Bold"
@@ -296,19 +297,19 @@
                                                            BorderColor="DarkGray"
                                                            HorizontalOptions="FillAndExpand">
                                                         <Label FontFamily="FS"
-                                                               TextColor="{DynamicResource Primary}"
+                                                               TextColor="Crimson"
                                                                HorizontalTextAlignment="Center"
                                                                VerticalTextAlignment="Center"
                                                                FontAttributes="Bold">
                                                             <Label.FormattedText>
                                                                 <FormattedString>
-                                                                    <Span Text="{x:Static fontAwsome:FontAwesomeIcons.Download}"/>
-                                                                    <Span Text=" GATEPASS"/>
+                                                                    <Span Text="{x:Static fontAwsome:FontAwesomeIcons.TrashAlt}"/>
+                                                                    <Span Text=" DELETE"/>
                                                                 </FormattedString>
                                                             </Label.FormattedText>
                                                         </Label>
                                                         <Frame.GestureRecognizers>
-                                                            <TapGestureRecognizer Command="{Binding OrderUpCommand}"/>
+                                                            <TapGestureRecognizer Command="{Binding DelHarvestCommand}"/>
                                                         </Frame.GestureRecognizers>
                                                     </Frame>
                                                     <BoxView Grid.Row="0" Grid.Column="1"  BackgroundColor="{DynamicResource Primary}"></BoxView>
@@ -418,7 +419,7 @@
                                                                         </Grid.RowDefinitions>
 
                                                                         <Label Grid.Column="0" Grid.Row="0" Text="{Binding AndroidLoadSheet}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
-                                                                        <Label Grid.Column="1" Grid.Row="0" Text="{Binding LoadDate,StringFormat='{0:MM-dd-yyyy}'}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                                        <Label Grid.Column="1" Grid.Row="0" Text="{Binding DateAdded,StringFormat='{0:MM-dd-yyyy}'}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
                                                                         <Label Grid.Column="2" Grid.Row="0" Text="{Binding Load_Status}" TextColor="Black" FontSize="Header" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
                                                                     </Grid>
                                                                 </Frame>
@@ -432,21 +433,27 @@
                                 </ScrollView>                                
                             </xct:TabViewItem.Content>
                         </xct:TabViewItem>
-                    </xct:TabView>
-                </StackLayout>
-                <StackLayout BackgroundColor="Transparent" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand" Padding="10,5" Margin="0" HeightRequest="55">
-                    <Button Command="{Binding LogoutCommand}" Text="LOGOUT" TextColor="White" BackgroundColor="Crimson" FontSize="Subtitle" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5">
-                        <Button.ImageSource>
-                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.SignOutAlt}"></FontImageSource>
-                        </Button.ImageSource>
-                    </Button>
-                    <!-- -->
-                    <Button Command="{Binding BtnTestCommand}" Text="TEST" TextColor="White" FontSize="Subtitle" BackgroundColor="{DynamicResource Primary}" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5"  HeightRequest="35">
-                        <Button.ImageSource>
-                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.Info}"></FontImageSource>
-                        </Button.ImageSource>
-                    </Button>
-
+                    </xct:TabView>                    
+                    <Grid Margin="3,0,3,0" Grid.ColumnSpan="2" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,*" RowSpacing="2" ColumnSpacing="3" HorizontalOptions="End" VerticalOptions="End">
+                        <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="Crimson" HasShadow="True" CornerRadius="8" Padding="3" >
+                            <StackLayout Orientation="Vertical">
+                                <Label Text="{x:Static fontAwsome:FontAwesomeIcons.SignOutAlt}" TextColor="White" FontFamily="FS" FontAttributes="Bold" FontSize="24" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                <Label Text="LOGOUT" TextColor="White" FontSize="12" FontAttributes="Bold" FontFamily="FS" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                            </StackLayout>
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer  Command="{Binding LogoutCommand}"/>
+                            </Frame.GestureRecognizers>
+                        </Frame>
+                        <Frame Grid.Row="0" Grid.Column="1" BackgroundColor="{DynamicResource Primary}" HasShadow="True" CornerRadius="8" Padding="3">
+                            <StackLayout Orientation="Vertical">
+                                <Label Text="{x:Static fontAwsome:FontAwesomeIcons.Info}" TextColor="White" FontFamily="FS" FontAttributes="Bold" FontSize="24" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                <Label Text="TEST" TextColor="White" FontSize="12" FontAttributes="Bold" FontFamily="FS" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                            </StackLayout>
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding BtnTestCommand}"/>
+                            </Frame.GestureRecognizers>
+                        </Frame>
+                    </Grid>
                 </StackLayout>
             </StackLayout>
         </AbsoluteLayout>        

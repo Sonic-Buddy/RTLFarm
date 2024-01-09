@@ -74,10 +74,14 @@ namespace RTLFarm.Helpers
         public const string IsRecover = "RECOVER101";
         public const string IsRegister = "REGISTER101";
 
-
+        public const string IsClear = "Clear";
         public const string IsError = "Error";
         public const string IsSuccess = "Success";
         public const string IsEdit = "Edited";
         public const string IsAdd = "Added";
+        public const string IsFailed = "Failed";
+        public const string IsEnable = "Enable";
+        public const string IsNonet = "No Internet";
+
     }
 }

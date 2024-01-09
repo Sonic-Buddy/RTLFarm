@@ -54,7 +54,6 @@
                         <Label FormattedText="{Binding TunHeader.LoadDate, StringFormat=\{0:d\}}" FontFamily="FS" TextColor="Black" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
                     </StackLayout>
                 </Frame>
-
                 <Frame Margin="5,0" Padding="10,5">
                     <StackLayout Orientation="Horizontal">
                         <Label Text="LOCATION: " FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
@@ -75,16 +74,7 @@
                         <Picker Title="{Binding Plate_Number}" ItemsSource="{Binding TruckMaster_List}" ItemDisplayBinding="{Binding TruckPlateNo}" SelectedItem="{Binding SelectTruckMaster}" IsEnabled="{Binding IsClose_Status}" TitleColor="Black" Margin="0" FontSize="Title" FontAttributes="Bold" HorizontalOptions="FillAndExpand"/>
                     </StackLayout>
                 </Frame>
-
-                <!--
-                <Frame Margin="5,0" Padding="10,5" >
-                    <StackLayout Orientation="Horizontal">
-                        <Label Text="TRUCK NUMBER: " FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
-                        <Label Text="{Binding TunHeader.Plate_Number}" FontFamily="FS" TextColor="Black" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
-                    </StackLayout>
-                </Frame>
--->
-
+                
                 <xct:Expander IsExpanded="True">
                     <xct:Expander.Header>
                         <StackLayout Orientation="Horizontal" Margin="5,0" BackgroundColor="Transparent" Padding="3">
@@ -171,7 +161,7 @@
                             <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.ArrowAltCircleLeft}"></FontImageSource>
                         </Button.ImageSource>
                     </Button>
-                    <Button Command="{Binding SyncloadsheetCommand}" Text="SYNC LOADSHEET" FontSize="Subtitle" TextColor="White" BackgroundColor="ForestGreen" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5" IsVisible="{Binding IsHidebtnSync}">
+                    <Button Command="{Binding SyncloadsheetCommand}" Text="SYNC LOADSHEET" FontSize="Subtitle" IsEnabled="{Binding Is_SelectTrack}" TextColor="White" BackgroundColor="ForestGreen" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5" IsVisible="{Binding IsHidebtnSync}">
                         <Button.ImageSource>
                             <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.Save}"></FontImageSource>
                         </Button.ImageSource>

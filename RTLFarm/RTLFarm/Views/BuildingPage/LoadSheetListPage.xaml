@@ -91,7 +91,17 @@
 
                                             <Label Grid.Column="0" Text="  LOADSHEET"  TextColor="{DynamicResource LMSecond}" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
                                             <Label Grid.Column="1" Text="PRODUCTION DATE" TextColor="{DynamicResource LMSecond}" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                            <!--
                                             <Label Grid.Column="2" Text="STATUS" TextColor="{DynamicResource LMSecond}" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                            -->
+
+                                            <Picker Title="{Binding Status_Title}" Grid.Column="2" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" ItemsSource="{Binding Status_List}" ItemDisplayBinding="{Binding Egg_Desc}"
+        SelectedItem="{Binding SelectStatusList}"
+        TitleColor="{DynamicResource LMSecond}"
+                                                    TextColor="{DynamicResource LMSecond}"
+        Margin="0,0,3,0"
+        FontSize="Subtitle"
+        FontAttributes="Bold"/>
                                         </Grid>
                                     </Frame>
                                 </StackLayout>

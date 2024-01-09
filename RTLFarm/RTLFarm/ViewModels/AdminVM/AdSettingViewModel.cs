@@ -1,4 +1,5 @@
-﻿using MvvmHelpers;
+﻿using Acr.UserDialogs;
+using MvvmHelpers;
 using MvvmHelpers.Commands;
 using RTLFarm.Helpers;
 using RTLFarm.Models.ConfigurationModel;
@@ -14,6 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -25,7 +27,7 @@ namespace RTLFarm.ViewModels.AdminVM
         GlobalDependencyServices _global = new GlobalDependencyServices();
 
         int _enterport, _enterp1, _enterp2, _enterp3, _enterp4;
-        string _enteraddress, _ipaddress;
+        string _enteraddress, _ipaddress, _usercodes;
         bool _isnotenteraddress, _isenteraddress, _isrefreshing, _isrefreshtrans, _isrefreshlogs;
         ConfigurationDeviceModel _selectip;
         TunnelHeader _selecttunheader;
@@ -34,6 +36,7 @@ namespace RTLFarm.ViewModels.AdminVM
         public bool IsRefreshing { get => _isrefreshing; set => SetProperty(ref _isrefreshing, value); }
         public bool IsRefreshTrans { get => _isrefreshtrans; set => SetProperty(ref _isrefreshtrans, value); }
         public bool IsRefreshLogs { get => _isrefreshlogs; set => SetProperty(ref _isrefreshlogs, value); }
+        public string User_Codes { get => _usercodes; set => SetProperty(ref _usercodes, value); }
         public ConfigurationDeviceModel SelectIP { get => _selectip; set => SetProperty(ref _selectip, value); }
         public TunnelHeader Select_TunHeader { get => _selecttunheader; set => SetProperty(ref _selecttunheader, value); }
         //
@@ -135,7 +138,9 @@ namespace RTLFarm.ViewModels.AdminVM
                 if (_selectuserlist == value) { return; }
                 _selectuserlist = value;
                 OnPropertyChanged();
+                User_Codes = value.User_Code;
                 OnSortbyuser(value.User_Code);
+                
             }
         }
         public AsyncCommand RefreshCommand { get; }
@@ -148,6 +153,7 @@ namespace RTLFarm.ViewModels.AdminVM
         public AsyncCommand SetupCommand { get; }
         public AsyncCommand LogoutCommand { get; }
         public AsyncCommand BtnTestCommand { get; }
+        public AsyncCommand DelHarvestCommand { get; }
         public AsyncCommand SelectCommand { get; set; }
 
         public ObservableRangeCollection<ConfigurationDeviceModel> IP_List { get; set; }
@@ -172,6 +178,8 @@ namespace RTLFarm.ViewModels.AdminVM
             AddIPCommand = new AsyncCommand(OnInsertIP);
             RefreshTransCommand = new AsyncCommand(OnRefreshTrans);
             RefreshLogsCommand = new AsyncCommand(OnRefreshLogs);
+            DelHarvestCommand = new AsyncCommand(OnDeletebydata);
+            BtnTestCommand = new AsyncCommand(OnSyncuserlog);
         }
         private async Task OnRefresh()
         {            
@@ -312,6 +320,14 @@ namespace RTLFarm.ViewModels.AdminVM
         private async Task OnRefreshTrans()
         {
             var _tunnelheaderList = await _global.tunnelheader.GetTunnelheadermaster();
+            if(_tunnelheaderList.Count().Equals(0))
+            {
+                await _global.configurationService.MessageAlert("No record found.");
+                await OnGenerateUser();
+                IsRefreshTrans = false;
+                return;
+            }
+
             var _tunheadersortdate = _tunnelheaderList.OrderByDescending(a => a.LoadDate).ToList();
             TunnelHeader_List.Clear();
             TunnelHeader_List.ReplaceRange(_tunheadersortdate);
@@ -393,7 +409,61 @@ namespace RTLFarm.ViewModels.AdminVM
             await Shell.Current.GoToAsync(route);
         }
 
+        private async Task OnDeletebydata()
+        {
+            try
+            {
+                if(string.IsNullOrEmpty(User_Codes) || string.IsNullOrWhiteSpace(User_Codes))
+                {
+                    await _global.configurationService.MessageAlert("Please select user to delete data");
+                    return;
+                }
 
+                bool _confirmation = await App.Current.MainPage.DisplayAlert("Message Alert", $"You're sure to DELETE this data of {User_Codes}?", "Yes", "No");
+                if (_confirmation == false)
+                {                    
+                    return;
+                }
+
+                await _global.tunnelheader.DeleteHarvestbyUser(User_Codes);
+
+            }
+            catch (Exception ex)
+            {
+                await _global.configurationService.MessageAlert(ex.Message);
+                return;
+            }
+        }
+
+        private async Task OnSyncuserlog()
+        {
+            var loading = UserDialogs.Instance.Loading("Loading. . .");
+            loading.Show();
+            try
+            {
+                
+                DateTime _todayDate = DateTime.Now.AddDays(-2);
+                var _logmasterlist = await _global.logsService.Getlogsmasterlist();
+                var _sortdatalist = _logmasterlist.Where(a => a.Logs_Create.Date > _todayDate.Date).ToList();
+                foreach (var _item in _sortdatalist)
+                {
+                    //string _datestring = DateTime.Now.ToString("ddMMyyyyHHmmssfff");
+                    //await Task.Delay(500);
+                    //string _logscode = $"{_item.Acc_Code}{_datestring}";
+                    //_item.Logs_Code = _logscode;
+                    await _global.logsService.Postlogs_API(_item);
+                }
+
+                await _global.configurationService.MessageAlert("Successfully sync");
+                loading.Dispose();
+            }
+            catch (Exception ex)
+            {
+                await _global.configurationService.MessageAlert(ex.Message);
+                loading.Dispose();
+            }
+            
+        }
         private async Task<List<TunnelHeader>> GroupAG_Users(List<TunnelHeader> _tunheaderList)
         {
             await Task.Delay(10);

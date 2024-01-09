@@ -118,6 +118,8 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             RemoveCommand = new AsyncCommand<DummyTunDetails>(OnRemoveinList);
             CompletedCommand = new AsyncCommand(OnCompletedLoadsheet);
             SaveLSCommand = new AsyncCommand(OnSaveloadsheet);
+
+
         }
 
         private async Task OnRefresh()
@@ -301,7 +303,10 @@ namespace RTLFarm.ViewModels.BuildingViewModel
 
             bool _confirmation = await App.Current.MainPage.DisplayAlert("Message Alert", "You're sure to save it?", "Yes", "No");
             if (_confirmation == false)
+            {
+                await OnAddlogs(UserModel.SalesmanCode, UserModel.UserFullName, UserModel.UserRole, TokenCons.IsEnable, $"You're sure to save it? A: {_confirmation}", TokenCons.IsFailed);
                 return;
+            } 
 
             var _loading = UserDialogs.Instance.Loading("Saving Data. . .");
             _loading.Show();
@@ -370,11 +375,14 @@ namespace RTLFarm.ViewModels.BuildingViewModel
 
                 _loading.Dispose();
                 await _global.configurationService.MessageAlert("Successfully Save");
+                await OnAddlogs(UserModel.SalesmanCode, UserModel.UserFullName, UserModel.UserRole, TokenCons.IsSuccess, $"Create loadsheet {Loadsheet_Code}", TokenCons.IsProcessing);
+
                 await OnClose();
             }
             catch (Exception ex)
             {
                 await _global.configurationService.MessageAlert(ex.Message);
+                await OnAddlogs(UserModel.SalesmanCode, UserModel.UserFullName, UserModel.UserRole, TokenCons.IsError, ex.Message, TokenCons.IsFailed);
                 _loading.Dispose();
                 return;
             }

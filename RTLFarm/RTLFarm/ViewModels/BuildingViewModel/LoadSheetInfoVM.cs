@@ -24,7 +24,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
     {
         GlobalDependencyServices _global = new GlobalDependencyServices();
 
-        bool _isrefresh, _ishidebtnsync, _isunhidebtnsync, _isclosestatus;
+        bool _isrefresh, _ishidebtnsync, _isunhidebtnsync, _isclosestatus, _isselecttrack;
         double _grandtotalegg;
         int _squencecount;
         string _loadsheetcode, _platenumber, _buildinglocation;
@@ -36,6 +36,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         public bool IsHidebtnSync { get => _ishidebtnsync; set => SetProperty(ref _ishidebtnsync, value); }
         public bool IsUnHidebtnSync { get => _isunhidebtnsync; set => SetProperty(ref _isunhidebtnsync, value); }
         public bool IsClose_Status { get => _isclosestatus; set => SetProperty(ref _isclosestatus, value); }
+        public bool Is_SelectTrack { get => _isselecttrack; set => SetProperty(ref _isselecttrack, value); }
         public int Squence_Count { get => _squencecount; set => SetProperty(ref _squencecount, value); }
         public string LoadSheet_Code { get => _loadsheetcode; set => SetProperty(ref _loadsheetcode, value); }
         public string Plate_Number { get => _platenumber; set => SetProperty(ref _platenumber, value); }
@@ -53,6 +54,15 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                 _truckmaster = value;
                 OnPropertyChanged();
                 Plate_Number = value.TruckPlateNo;
+
+                if(string.IsNullOrEmpty(Plate_Number) || string.IsNullOrWhiteSpace(Plate_Number))
+                {
+                    Is_SelectTrack = false;
+                }
+                else
+                {
+                    Is_SelectTrack = true;
+                }
             }
         }
 
@@ -173,6 +183,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                 if(Plate_Number == "SELECT TRUCK" || string.IsNullOrEmpty(Plate_Number) || string.IsNullOrWhiteSpace(Plate_Number))
                 {
                     await _global.configurationService.MessageAlert("Please choose a truck");
+                    await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsError, $"Vehicle truck, not selected", TokenCons.IsFailed);
                     _loading.Dispose();
                     return;
                 }
@@ -181,6 +192,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                 if (!_response)
                 {
                     _loading.Dispose();
+                    await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsNonet, $"No internet connection", TokenCons.IsFailed);
                     return;
                 }
                     
@@ -188,6 +200,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                 if (_confirmation == false)
                 {
                     _loading.Dispose();
+                    await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsError, $"Trays can't fit the Tray Capacity of the Truck. A:{_confirmation}", TokenCons.IsFailed);
                     return;
                 }               
 
@@ -220,7 +233,10 @@ namespace RTLFarm.ViewModels.BuildingViewModel
 
                 var _Isexistapi = await _global.tunnelheader.GetapiExistloadsheet(_tunnelheader.User_Code, _tunnelheader.LoadDate, _tunnelheader.AndroidLoadSheet);
                 if (_Isexistapi != 0)
+                {
+                    await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsError, $"Create loadsheet number {_tunnelheader.AndroidLoadSheet} is already exist", TokenCons.IsFailed);
                     return;
+                }
 
                 var _tunheaderModel = await _global.tunnelheader.PostapiTunnelheader(_tunnelheader);
 
@@ -247,12 +263,15 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                 }
 
                 await OnUpdateproduction(_tunnelheader);
-
+                
+                await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, "Sync", $"Successfully sync loadsheet {_tunnelheader.AndroidLoadSheet}/{_tunnelheader.LoadNumber}", _tunnelheader.Load_Status);
+                await OnSyncuserlog();
                 _loading.Dispose();
             }
             catch (Exception ex)
             {
                 await _global.configurationService.MessageAlert(ex.Message);
+                await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsError, ex.Message, TokenCons.IsFailed);
                 _loading.Dispose();
                 return;
             }
@@ -328,11 +347,11 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             }
             
         }
+        //Code sapag buhat ug loadsheet
         private async Task OnGenerateLS()
         {
             try
             {
-                //Code sapag buhat ug loadsheet
                 string[] returnValue = new string[2];
 
                 var startingValue = "LS";
@@ -405,7 +424,16 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                 return;
             }
         }
-
+        private async Task OnSyncuserlog()
+        {
+            DateTime _todayDate = DateTime.Now.AddDays(-1);
+            var _logmasterlist = await _global.logsService.Getlogsmasterlist();
+            var _sortdatalist = _logmasterlist.Where(a => a.Logs_Create.Date > _todayDate.Date).ToList();
+            foreach(var _item in _sortdatalist)
+            {
+                await _global.logsService.Postlogs_API(_item);
+            }
+        }
         private async Task OnClose()
         {
             await Shell.Current.GoToAsync("..");

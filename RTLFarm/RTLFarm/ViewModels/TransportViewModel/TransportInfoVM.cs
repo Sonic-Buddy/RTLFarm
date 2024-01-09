@@ -170,6 +170,8 @@ namespace RTLFarm.ViewModels.TransportViewModel
                     await _global.tunneldetails.Update_TunnelDetails(_tunnedetails);
                 }
 
+
+                await OnSyncuserlog();
                 await _global.configurationService.MessageAlert("Successfully accepted");
                 await OnClose();
             }
@@ -191,6 +193,16 @@ namespace RTLFarm.ViewModels.TransportViewModel
             };
             TokenSetGet.SetParamModel(_parammodel);
             await PopupNavigation.Instance.PushAsync(new RejectDialog());
+        }
+        private async Task OnSyncuserlog()
+        {
+            DateTime _todayDate = DateTime.Now.AddDays(-1);
+            var _logmasterlist = await _global.logsService.Getlogsmasterlist();
+            var _sortdatalist = _logmasterlist.Where(a => a.Logs_Create.Date > _todayDate.Date).ToList();
+            foreach (var _item in _sortdatalist)
+            {
+                await _global.logsService.Postlogs_API(_item);
+            }
         }
         private async Task OnClose()
         {

@@ -35,7 +35,7 @@
                     <Frame Padding="10" HorizontalOptions="FillAndExpand" CornerRadius="8" BackgroundColor="Transparent">
                         <StackLayout HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" >
 
-                            <Label Text="RTL FARM" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" FontSize="Title"  TextColor="{DynamicResource Secondary}"/>
+                            <Label Text="AGRO APPLICATION" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" FontSize="Title"  TextColor="{DynamicResource Secondary}"/>
                             <!-- -->
                             <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand" BackgroundColor="Transparent">
                                 <Frame HasShadow="False" BackgroundColor="Transparent">
@@ -131,6 +131,6 @@
                     </Frame>
                 </StackLayout>
             </StackLayout>
-        </ScrollView>        
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

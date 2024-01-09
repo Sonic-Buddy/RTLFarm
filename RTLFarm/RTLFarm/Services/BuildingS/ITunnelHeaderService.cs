@@ -29,5 +29,6 @@ namespace RTLFarm.Services.BuildingS
         Task<IEnumerable<TunnelHeader>> GetTunheaderbyflockman(string _flockmanCode);
         Task<IEnumerable<TunnelHeader>> GetSpecifictunheader(TunnelHeader _obj, string _type);
         Task DeleteAllTunHeader();
+        Task DeleteHarvestbyUser(string _userId);
     }
 }

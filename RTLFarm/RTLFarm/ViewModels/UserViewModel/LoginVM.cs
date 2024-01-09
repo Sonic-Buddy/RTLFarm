@@ -6,14 +6,11 @@ using RTLFarm.Helpers;
 using RTLFarm.Models.ConfigurationModel;
 using RTLFarm.Models.UserModel;
 using RTLFarm.Services;
-using RTLFarm.Views;
 using RTLFarm.Views.AdminView.AdminDialog;
 using RTLFarm.Views.BuildingPage;
 using RTLFarm.Views.DialogPage;
 using RTLFarm.Views.TransportPage;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -66,7 +63,6 @@ namespace RTLFarm.ViewModels.UserViewModel
         public string SalesmanCode { get => salesmancode; set => SetProperty(ref salesmancode, value); }
         public string DateString { get => datestring; set => SetProperty(ref datestring, value); }
         public bool IsEnable { get => _enable; set => SetProperty(ref _enable, value); }
-
         public bool CheckBoxC
         {
             get => cbox;
@@ -118,8 +114,9 @@ namespace RTLFarm.ViewModels.UserViewModel
                 IsBtnpassunhide = true;
                 IsReadusername = false;
 
-                //Username = "user102";
-                //Password = "2134";
+                Username = "proi113";
+                //Username = "user101";
+                Password = "1234";
 
                 IsRegister = Preferences.Get("iSregistered", false);
 
@@ -156,7 +153,7 @@ namespace RTLFarm.ViewModels.UserViewModel
                 if (_userModel == null)
                 {
                     await _global.configurationService.MessageAlert("User is not exist");
-                    await OnAddlogs(string.Empty, string.Empty, $"Username: {Username}, Password: {Username}", TokenCons.IsError, "User is not exist");
+                    await OnAddlogs(string.Empty, string.Empty, $"Username: {Username}, Password: {Username}", TokenCons.IsError, "User is not exist", "null");
                     IsEnable = true;
                     return;
                 }
@@ -164,19 +161,19 @@ namespace RTLFarm.ViewModels.UserViewModel
                 if (_userModel.UserRole == "TPicker")
                 {
                     Preferences.Set("prmtmastercode", _userModel.SalesmanCode);
-                    await OnAddlogs(_userModel.SalesmanCode, _userModel.UserFullName, _userModel.UserRole, TokenCons.IsSuccess, "Successfully login");
+                    await OnAddlogs(_userModel.SalesmanCode, _userModel.UserFullName, _userModel.UserRole, TokenCons.IsSuccess, "Successfully login", TokenCons.IsActive);
                     await OnLoadSheet();
                 }
                 else if (_userModel.UserRole == "FDriver")
                 {
                     Preferences.Set("prmtmastercode", _userModel.SalesmanCode);
-                    await OnAddlogs(_userModel.SalesmanCode, _userModel.UserFullName, _userModel.UserRole, TokenCons.IsSuccess, "Successfully login");
+                    await OnAddlogs(_userModel.SalesmanCode, _userModel.UserFullName, _userModel.UserRole, TokenCons.IsSuccess, "Successfully login", TokenCons.IsActive);
                     await OnDriveruser();
                 }
                 else
                 {
                     await _global.configurationService.MessageAlert("Un-Authorize user");
-                    await OnAddlogs(_userModel.SalesmanCode, _userModel.UserFullName, _userModel.UserRole, TokenCons.IsError, "Un-Authorize user");
+                    await OnAddlogs(_userModel.SalesmanCode, _userModel.UserFullName, _userModel.UserRole, TokenCons.IsError, "Un-Authorize user", "Failed");
                     IsEnable = true;
                     return;
                 }
@@ -184,7 +181,7 @@ namespace RTLFarm.ViewModels.UserViewModel
             catch (Exception ex)
             {
                 await _global.configurationService.MessageAlert(ex.Message);
-                await OnAddlogs(string.Empty, string.Empty, $"Username: {Username}, Password: {Username}", TokenCons.IsError, ex.Message);
+                await OnAddlogs(string.Empty, string.Empty, $"Username: {Username}, Password: {Username}", TokenCons.IsError, ex.Message, "Failed");
                 Username = String.Empty;
                 Password = String.Empty;
                 IsEnable = true;
@@ -211,7 +208,7 @@ namespace RTLFarm.ViewModels.UserViewModel
                 bool _response = await _global.configurationService.GetInternetConnection();
                 if (!_response)
                 {
-                    await OnAddlogs(string.Empty, string.Empty, string.Empty, TokenCons.IsError, "Please, check your internet connection");
+                    await OnAddlogs(string.Empty, string.Empty, string.Empty, TokenCons.IsError, "Please, check your internet connection", "Failed");
                     _loading.Dispose();
                     return;
                 }
@@ -220,7 +217,7 @@ namespace RTLFarm.ViewModels.UserViewModel
                 if (string.IsNullOrEmpty(Verification) || string.IsNullOrWhiteSpace(Verification))
                 {
                     await _global.configurationService.MessageAlert("Please enter verification code");
-                    await OnAddlogs(string.Empty, string.Empty, string.Empty, TokenCons.IsError, "Please enter verification code");
+                    await OnAddlogs(string.Empty, string.Empty, string.Empty, TokenCons.IsError, "Please enter verification code", TokenCons.IsActive);
                     _loading.Dispose();
                     return;
                 }
@@ -235,13 +232,13 @@ namespace RTLFarm.ViewModels.UserViewModel
 
                     TokenSetGet.SetParamModel(_paramModel);
                     _loading.Dispose();
-                    await OnAddlogs(_paramModel.User_Code, "Unknow", Verification, TokenCons.IsSuccess, "Verification code is Correct");
+                    await OnAddlogs(_paramModel.User_Code, "Unknow", Verification, TokenCons.IsSuccess, "Verification code is Correct", TokenCons.IsActive);
                     await PopupNavigation.Instance.PushAsync(new RegisterAccountDialog());
                 }
                 else
                 {
                     await _global.configurationService.MessageAlert("Verification code is wrong");
-                    await OnAddlogs(string.Empty, string.Empty, Verification, TokenCons.IsError, "Verification code is wrong");
+                    await OnAddlogs(string.Empty, string.Empty, Verification, TokenCons.IsError, "Verification code is wrong", "Failed");
                     _loading.Dispose();
                     return;
                 }
@@ -251,7 +248,7 @@ namespace RTLFarm.ViewModels.UserViewModel
             catch (Exception ex)
             {
                 await _global.configurationService.MessageAlert(ex.Message);
-                await OnAddlogs(string.Empty, string.Empty, Verification, TokenCons.IsError, ex.Message);
+                await OnAddlogs(string.Empty, string.Empty, Verification, TokenCons.IsError, ex.Message, "Failed");
                 IsEnable = false;
                 _loading.Dispose();
                 return;
@@ -267,32 +264,18 @@ namespace RTLFarm.ViewModels.UserViewModel
                 await _global.dummytundetails.DeleteAllDummy(); 
                 await _global.dummytunheader.DeleteAllDummy();
 
-                await OnAddlogs(string.Empty, string.Empty, string.Empty, TokenCons.IsSuccess, "Successfully Deleted");
+                await OnAddlogs(string.Empty, string.Empty, string.Empty, TokenCons.IsSuccess, "Successfully Deleted", "Deleted");
                 await _global.configurationService.MessageAlert("Successfully Deleted");
             }
             catch (Exception ex)
             {
                 await _global.configurationService.MessageAlert(ex.Message);
-                await OnAddlogs(string.Empty, string.Empty, string.Empty, TokenCons.IsError, ex.Message);
+                await OnAddlogs(string.Empty, string.Empty, string.Empty, TokenCons.IsError, ex.Message, "Failed");
                 return;
             }
         }
 
-        private async Task OnAddlogs(string _accCode, string _accName, string _accDesc, string _transType, string _transDecs)
-        {
-            UserLogsModel _logsModel = new UserLogsModel()
-            {
-                Acc_Code = _accCode,
-                Acc_Name = _accName,
-                Acc_Description = _accDesc,
-                Trans_Type = _transType,
-                Trans_Desc = _transDecs,
-                Trans_Create = DateTime.Now,
-                Logs_Create = DateTime.Now
-            };
-            await Task.Delay(1000);
-            await _global.logsService.Insertlogs_local(_logsModel);
-        }
+        
         private async Task OnTestDialog()
         {
             await PopupNavigation.Instance.PushAsync(new UpdateDialog());

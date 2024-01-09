@@ -90,8 +90,8 @@
                                                     <RowDefinition Height="Auto"></RowDefinition>
                                                 </Grid.RowDefinitions>
 
-                                                <Label Grid.Column="0" Text="  EGG TYPE "  TextColor="Black" FontSize="Title" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
-                                                <Label Grid.Column="1" Text=" QUANTITY (PCs)" TextColor="Black" FontSize="Title" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Padding="0,0,5,0" ></Label>
+                                                <Label Grid.Column="0" Text="  EGG TYPE "  TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+                                                <Label Grid.Column="1" Text=" QUANTITY (PCs)" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Padding="0,0,5,0" ></Label>
                                             </Grid>
                                         </Frame>
                                     </StackLayout>

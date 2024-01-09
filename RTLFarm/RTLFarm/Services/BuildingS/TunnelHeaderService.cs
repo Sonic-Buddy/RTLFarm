@@ -20,6 +20,7 @@ namespace RTLFarm.Services.BuildingS
 {
     public class TunnelHeaderService : ITunnelHeaderService
     {
+        //GlobalDependencyServices _global = new GlobalDependencyServices();
         static SQLiteAsyncConnection db;
         //Configation SQL lite
         static async Task DbCon()
@@ -36,6 +37,26 @@ namespace RTLFarm.Services.BuildingS
             await DbCon();
             await db.DeleteAllAsync<TunnelHeader>();
         }
+
+        public async Task DeleteHarvestbyUser(string _userId)
+        {
+            await DbCon();
+            var _toDate = DateTime.Now.AddDays(-14);
+            var _harvestList = await db.Table<TunnelHeader>().ToListAsync();
+            var _userList = _harvestList.Where(c => c.User_Code == _userId && c.DateAdded.Date < _toDate.Date).ToList();
+            
+            if(_userList.Count.Equals(0))
+            {
+                //await App.Current.MainPage.DisplayAlert("Message Alert", "No record found.", "OK");
+                throw new Exception();
+            }
+
+            foreach(var _itm in _userList)
+            {
+                await db.DeleteAsync(_itm);
+            }
+        }
+
 
         public async Task<int> GetapiExistloadsheet(string _flockmanCode, DateTime _productionDate, string _loadsheet)
         {
@@ -139,7 +160,8 @@ namespace RTLFarm.Services.BuildingS
 
                 case "OnDriverView":
                     var _ondriverview = _masterList.Where(b => b.Load_Status == TokenCons.IsProcessing || b.Load_Status == TokenCons.IsForTrans || b.Load_Status == TokenCons.IsCancel).ToList();
-                    return _ondriverview;
+                    var _statusList = _ondriverview.Where(c => !string.IsNullOrWhiteSpace(c.Plate_Number) || !string.IsNullOrWhiteSpace(c.Plate_Number)).ToList();
+                    return _statusList;
             }
         }
 
@@ -208,7 +230,7 @@ namespace RTLFarm.Services.BuildingS
             _up.ReasonForReject = _obj.ReasonForReject;
             _up.CancelledLoadSheet = _obj.CancelledLoadSheet;
             _up.Remarks = _obj.Remarks;
-            
+
 
             _ = await db.UpdateAsync(_up);
             return _obj;
@@ -239,7 +261,6 @@ namespace RTLFarm.Services.BuildingS
 
             _ = await db.UpdateAsync(_up);
         }
-
         public async Task Update_TunnelHeaderStatus(TunnelHeader _obj)
         {
             await DbCon();

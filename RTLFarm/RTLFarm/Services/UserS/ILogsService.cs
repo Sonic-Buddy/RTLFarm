@@ -13,5 +13,7 @@ namespace RTLFarm.Services.UserS
         Task<IEnumerable<UserLogsModel>> GetSpecifictype(string _transtype);
         Task<IEnumerable<UserLogsModel>> GetSpecificdate(DateTime _logsdate);
         Task<IEnumerable<UserLogsModel>> Getlogsmasterlist();
+        Task Postlogs_API(UserLogsModel _obj);
+        Task DeletePerWeeks();
     }
 }

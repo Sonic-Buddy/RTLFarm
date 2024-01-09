@@ -50,5 +50,15 @@ namespace RTLFarm
             _client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             return _client;
         }
+
+        public static HttpClient GetSecondClient()
+        {
+            string _baseURL = "http://sonicsales.net:2004";
+            HttpClient _client = new HttpClient();
+            _client.BaseAddress = new Uri(_baseURL);
+            _client.DefaultRequestHeaders.Accept.Clear();
+            _client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            return _client;
+        }
     }
 }

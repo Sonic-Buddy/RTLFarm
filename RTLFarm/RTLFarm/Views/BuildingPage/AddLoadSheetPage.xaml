@@ -58,7 +58,7 @@
                                 TitleColor="Black"
                                 Margin="0"
                                 FontSize="Title"
-                                FontAttributes="Bold"                                
+                                FontAttributes="Bold"
                                 HorizontalOptions="FillAndExpand"/>
                     </StackLayout>
                 </Frame>

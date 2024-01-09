@@ -4,6 +4,7 @@ using MvvmHelpers.Commands;
 using Rg.Plugins.Popup.Services;
 using RTLFarm.Helpers;
 using RTLFarm.Models.ConfigurationModel;
+using RTLFarm.Models.StatusModel;
 using RTLFarm.Models.TunnelDummy;
 using RTLFarm.Models.TunnelModel;
 using RTLFarm.Models.UserModel;
@@ -29,7 +30,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
 
         TunnelHeader _selecttunheader;
         int _squencecount;
-        string _loadsheetcode, _flockmanname, _newregister, _flockmancode;
+        string _loadsheetcode, _flockmanname, _newregister, _flockmancode, _statustitle;
         bool _isrefresh;
         public bool IsRefresh { get => _isrefresh; set => SetProperty(ref _isrefresh, value); }
         public int Squence_Count { get => _squencecount; set => SetProperty(ref _squencecount, value); }
@@ -37,6 +38,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         public string FLockman_Code { get => _flockmancode; set => SetProperty(ref _flockmancode, value); }
         public string FLockman_Name { get => _flockmanname; set => SetProperty(ref _flockmanname, value); }
         public string New_Register { get => _newregister; set => SetProperty(ref _newregister, value); }
+        public string Status_Title { get => _statustitle; set => SetProperty(ref _statustitle, value); }
 
         public TunnelHeader Select_TunHeader { get => _selecttunheader; set => SetProperty(ref _selecttunheader, value); }
         public AsyncCommand RefreshCommand { get; set; }
@@ -46,8 +48,21 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         public AsyncCommand<TunnelHeader> SpecSyncCommand { get; set; }
         public AsyncCommand SelectCommand { get; set; }
         public ObservableRangeCollection<TunnelHeader> TunnelHeader_List { get; set; }
+        public ObservableRangeCollection<StatusType_Model> Status_List { get; set; }
         public Usermaster_Model User_Model = new Usermaster_Model();
 
+        StatusType_Model _selectstatuslist;
+        public StatusType_Model SelectStatusList
+        {
+            get => _selectstatuslist;
+            set
+            {
+                if (_selectstatuslist == value) { return; }
+                _selectstatuslist = value;
+                OnPropertyChanged();
+                OnSubStatusList(value.Egg_Desc);
+            }
+        }
         public LoadSheetListVM()
         {
             RefreshCommand = new AsyncCommand(OnRefresh);
@@ -57,6 +72,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             SpecSyncCommand = new AsyncCommand<TunnelHeader>(OnSpecSyncapi);
             LogoutCommand = new AsyncCommand(OnLogout);
             TunnelHeader_List = new ObservableRangeCollection<TunnelHeader>();
+            Status_List = new ObservableRangeCollection<StatusType_Model>();
 
             MessagingCenter.Subscribe<UpdateLSVM, string>(this, "parameterstring", async (page, e) =>
             {
@@ -74,10 +90,8 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                 User_Model = await _global.loginService.GetSpecificmodel(New_Register);
                 FLockman_Code = User_Model.SalesmanCode;
                 FLockman_Name = User_Model.UserFullName;
-                var _tunnelheaderList = await _global.tunnelheader.GetTunheaderbyflockman(User_Model.SalesmanCode);
-                var _tunheadersortdate = _tunnelheaderList.OrderByDescending(a => a.LoadDate).ToList();
-                TunnelHeader_List.Clear();
-                TunnelHeader_List.ReplaceRange(_tunheadersortdate);
+                await OnLoadDataBuilding(User_Model.SalesmanCode);                
+                await OnLoadStatusList();
                 IsRefresh = false;
             }
             catch (Exception ex) 
@@ -87,6 +101,14 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             }
         }
 
+        private async Task OnLoadDataBuilding(string _usercode)
+        {
+            Status_Title = "STATUS";
+            var _tunnelheaderList = await _global.tunnelheader.GetTunheaderbyflockman(_usercode);
+            var _tunheadersortdate = _tunnelheaderList.OrderByDescending(a => a.DateAdded).ToList();
+            TunnelHeader_List.Clear();
+            TunnelHeader_List.ReplaceRange(_tunheadersortdate);
+        }
         private async Task OnSpecSyncapi(TunnelHeader _obj)
         {
             try
@@ -168,19 +190,28 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             _loading.Show();
             try
             {
+                DateTime _todayDate = DateTime.Now.AddDays(-2);
+
                 bool _response = await _global.configurationService.GetInternetConnection();
                 if (!_response)
                 {
                     _loading.Dispose();
+                    await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsNonet, $"No internet connection", TokenCons.IsFailed);
                     return;
-                }                    
-
+                }
+               
                 TunnelHeader _upHeader = new TunnelHeader();
 
                 var _tunheaderList = await _global.tunnelheader.GetapiSpecificlist(User_Model.SalesmanCode, User_Model.WhSpecificLocation);
-                foreach(var _itmHead in _tunheaderList)
+                var _tunheadsortdate = _tunheaderList.Where(a => a.DateAdded.Date > _todayDate.Date).ToList();
+
+                foreach (var _itmHead in _tunheadsortdate)
                 {
-                    if(_itmHead.Load_Status == TokenCons.IsProcessing)
+                    if(_itmHead.Load_Status == TokenCons.IsCancel)
+                    {
+                        _itmHead.Load_Status = TokenCons.IsCancel;
+                    }
+                    else
                     {
                         _itmHead.Load_Status = TokenCons.Closed;
                     }
@@ -189,27 +220,31 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                     if(Is_existCount == 0)
                     {
                         _upHeader = await _global.tunnelheader.Insert_TunnelHeader(_itmHead);
+                        await OnAddlogs(FLockman_Code, FLockman_Name, User_Model.LoginStatus, "Sync", $"Insert to android storage LS: {_itmHead.LoadNumber}", TokenCons.IsSuccess);
                     }
                     else
                     {
                         _upHeader = await _global.tunnelheader.Update_TunHeader(_itmHead);
+                        await OnAddlogs(FLockman_Code, FLockman_Name, User_Model.LoginStatus, "Sync", $"Update android storage LS: {_itmHead.LoadNumber}", TokenCons.IsSuccess);
                     }
 
                     var _tundetailslist = await _global.tunneldetails.GetapiSpecificlist(_upHeader.AndroidLoadSheet, _upHeader.Building_Location);
-                    foreach(var _itmDetails in _tundetailslist)
+                    foreach (var _itmDetails in _tundetailslist)
                     {
                         int Is_CountExist = await _global.tunneldetails.Getexistcount(_itmDetails.Production_Date, _itmDetails.Remarks, _itmDetails.AndroidLoadSheet);
-                        if(Is_CountExist == 0)
+                        if (Is_CountExist == 0)
                         {
                             await _global.tunneldetails.Insert_TunnelDetails(_itmDetails);
                         }
                         else
                         {
                             await _global.tunneldetails.Update_TunnelDetails(_itmDetails);
-                        }                        
+                        }
                     }
+
                 }
 
+                await OnAddlogs(FLockman_Code, FLockman_Name, User_Model.LoginStatus, "Sync", $"Successfully Sync", TokenCons.IsSuccess);
                 _loading.Dispose();
                 await _global.configurationService.MessageAlert("Successfully update");
                 await OnRefresh();
@@ -217,6 +252,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             catch (Exception ex)
             {
                 await _global.configurationService.MessageAlert(ex.Message);
+                await OnAddlogs(FLockman_Code, FLockman_Name, User_Model.LoginStatus, "Sync", TokenCons.IsError + ex.Message, "Failed");
                 _loading.Dispose();
                 return;
             }
@@ -314,7 +350,6 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                         var reValue = startingValue + value + seqNo;
                         returnValue[0] = reValue;
                         returnValue[1] = seqNo.ToString();
-
                     }
                     else if (seqNo >= 10 && seqNo <= 99)
                     {
@@ -404,13 +439,47 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         {
             await Task.Delay(100);
 
+            //DateTime _todayDate = DateTime.Now.AddDays(-1);
+
+            //var _testlist = await _global.logsService.Getlogsmasterlist();
+            //var _sortlist = _testlist.Where(a => a.Logs_Create.Date > _todayDate.Date).ToList();
+
+            //await _global.configurationService.MessageAlert($"{_sortlist.Count}");
+
             await _global.dummytundetails.DeleteAllDummy();
             await _global.dummytunheader.DeleteAllDummy();
-
+            await OnAddlogs(FLockman_Code, FLockman_Name, User_Model.LoginStatus, TokenCons.IsSuccess, "Navigation is success", TokenCons.IsSuccess);
             var route = $"/{nameof(AddLoadSheetPage)}";
             await Shell.Current.GoToAsync(route);
         }
+        private async void OnSubStatusList(string _statusDesc)
+        {
+            if(_statusDesc.Equals(TokenCons.IsClear))
+            {
+                await OnLoadDataBuilding(User_Model.SalesmanCode);
+                return;
+            }
 
+            var _queryList = TunnelHeader_List.Where(a => a.Load_Status == _statusDesc).ToList();
+            if(_queryList.Count.Equals(0))
+            {
+                await OnLoadDataBuilding(User_Model.SalesmanCode);
+            }
+            else
+            {
+                TunnelHeader_List.Clear();
+                TunnelHeader_List.ReplaceRange(_queryList);
+            }
+        }
+        private async Task OnLoadStatusList()
+        {
+            Status_List.Clear();
+            await Task.Delay(100);
+            Status_List.Add(new StatusType_Model { Id = 1, STYId = 101, Egg_Code = "", Egg_Desc = TokenCons.IsProcessing, Egg_Qty = 10, Cat_Code = "", Sequence_No = 1 });
+            Status_List.Add(new StatusType_Model { Id = 2, STYId = 102, Egg_Code = "", Egg_Desc = TokenCons.Closed, Egg_Qty = 11, Cat_Code = "", Sequence_No = 2 });
+            Status_List.Add(new StatusType_Model { Id = 3, STYId = 103, Egg_Code = "", Egg_Desc = TokenCons.IsCancel, Egg_Qty = 12, Cat_Code = "", Sequence_No = 3 });
+            Status_List.Add(new StatusType_Model { Id = 4, STYId = 104, Egg_Code = "", Egg_Desc = "STATUS", Egg_Qty = 13, Cat_Code = "", Sequence_No = 4 });
+        }
         private async Task OnLogout()
         {
             var _item = await _global.loginService.GetSpecificmodel(New_Register);
@@ -433,6 +502,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             };
             await _global.loginService.UpdateAcc_local(_usermodel);
 
+            await OnAddlogs(FLockman_Code, FLockman_Name, _usermodel.LoginStatus, TokenCons.IsSuccess, "Successfully log out", "Logout");
             Preferences.Remove("prmtmastercode");
 
             var route = $"/{nameof(LoginPage)}";
