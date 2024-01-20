@@ -174,6 +174,13 @@ namespace RTLFarm.Services.BuildingS
             return _returnList;
         }
 
+        public async Task<List<TunnelHeader>> GetTunnelheaderList()
+        {
+            await DbCon();
+            var _masterList = await db.Table<TunnelHeader>().ToListAsync();
+            return _masterList;
+        }
+
         public async Task<IEnumerable<TunnelHeader>> GetTunnelheadermaster()
         {
             await DbCon();

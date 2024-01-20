@@ -49,6 +49,14 @@ namespace RTLFarm.Services.OthersS
             return _statustypelist;
         }
 
+        public async Task<List<StatusType_Model>> GetSubStatustypeList(string _eggcode)
+        {
+            await DbCon();
+            var _masterlist = await db.Table<StatusType_Model>().ToListAsync();
+            var _queryList = _masterlist.Where(a => a.Egg_Code == _eggcode).ToList();
+            return _queryList;
+        }
+
         public async Task<IEnumerable<StatusType_Model>> GetSubStatustypemaster(string _eggcode)
         {
             await DbCon();

@@ -20,7 +20,6 @@ namespace RTLFarm.ViewModels.BuildingViewModel
 {
     public class AddLoadSheetVM : ViewModelBase
     {
-
         GlobalDependencyServices _global = new GlobalDependencyServices();
 
         int _eggquantity;
@@ -33,7 +32,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         public string Flockman_Code { get => _flockmancode; set => SetProperty(ref _flockmancode, value); }
         public string EggStatus_Cat { get => _eggstatuscat; set => SetProperty(ref _eggstatuscat, value); }
         public string EggStatus_Desc { get => _eggstatusdesc; set => SetProperty(ref _eggstatusdesc, value); }
-        public string Loadsheet_Code { get => _loadsheetcode; set => SetProperty(ref _loadsheetcode, value); }      
+        public string Loadsheet_Code { get => _loadsheetcode; set => SetProperty(ref _loadsheetcode, value); }
         public bool Is_Substatus { get => _issubstatus; set => SetProperty(ref _issubstatus, value); }
         public bool IsColRefresh { get => _iscolrefresh; set => SetProperty(ref _iscolrefresh, value); }
         public bool IsEnable_QTY { get => _isenableqty; set => SetProperty(ref _isenableqty, value); }
@@ -91,13 +90,13 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                 IsEnable_QTY = true;
             }
         }
-        
-        
+
+
         public ObservableRangeCollection<StatusType_Model> StatusType_List { get; set; }
         public ObservableRangeCollection<StatusType_Model> SubStatusType_List { get; set; }
         public ObservableRangeCollection<DummyTunDetails> DummyTunDetails_List { get; set; }
 
-        public DummyTunHeader DummyTun_Header  = new DummyTunHeader();
+        public DummyTunHeader DummyTun_Header = new DummyTunHeader();
 
         public AsyncCommand RefreshCommand { get; set; }
         public AsyncCommand ColRefreshCommand { get; set; }
@@ -118,8 +117,6 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             RemoveCommand = new AsyncCommand<DummyTunDetails>(OnRemoveinList);
             CompletedCommand = new AsyncCommand(OnCompletedLoadsheet);
             SaveLSCommand = new AsyncCommand(OnSaveloadsheet);
-
-
         }
 
         private async Task OnRefresh()
@@ -152,7 +149,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             var _tundetailsList = await _global.dummytundetails.GetDummyTundetailsproduction(Production_Date, TokenCons.IsProcessing);
             DummyTunDetails_List.Clear();
             DummyTunDetails_List.ReplaceRange(_tundetailsList);
-            
+
             IsColRefresh = false;
         }
         private async Task OnPreference()
@@ -168,16 +165,16 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         }
         private async void OnSubStatustype(string _eggcode)
         {
-            
+
             if (_eggcode == "GOOD")
             {
                 Is_Substatus = false;
                 IsEnable_QTY = true;
                 EggStatus_Desc = "GOOD EGG";
                 EggStatus_Cat = "201";
-                
+
             }
-            else if(_eggcode == "CRACK")
+            else if (_eggcode == "CRACK")
             {
                 Is_Substatus = false;
                 IsEnable_QTY = true;
@@ -191,7 +188,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                 var _substatuslist = await _global.statustype.GetSubStatustypemaster(_eggcode);
                 SubStatusType_List.Clear();
                 SubStatusType_List.ReplaceRange(_substatuslist);
-            }     
+            }
         }
 
         private async Task OnSaveloadsheet()
@@ -200,7 +197,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             loading.Show();
             try
             {
-                if(Egg_Quantity == 0)
+                if (Egg_Quantity == 0)
                 {
                     await _global.configurationService.MessageAlert("No quantity added");
                     return;
@@ -230,6 +227,8 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                     Remarks = string.Empty,
                     User_Code = UserModel.SalesmanCode,
                 };
+
+
 
                 var _isexistloadsheet = await _global.dummytunheader.GetDummyExistloadsheet(_tunnelheader.AndroidLoadSheet);
                 if (_isexistloadsheet == 0)
@@ -292,7 +291,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             }
         }
         private async void OnResetStatusType()
-        {  
+        {
             StatusType_List = new ObservableRangeCollection<StatusType_Model>();
             SubStatusType_List = new ObservableRangeCollection<StatusType_Model>();
 
@@ -303,10 +302,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
 
             bool _confirmation = await App.Current.MainPage.DisplayAlert("Message Alert", "You're sure to save it?", "Yes", "No");
             if (_confirmation == false)
-            {
-                await OnAddlogs(UserModel.SalesmanCode, UserModel.UserFullName, UserModel.UserRole, TokenCons.IsEnable, $"You're sure to save it? A: {_confirmation}", TokenCons.IsFailed);
                 return;
-            } 
 
             var _loading = UserDialogs.Instance.Loading("Saving Data. . .");
             _loading.Show();
@@ -314,7 +310,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             {
 
                 var _dummyheaderList = await _global.dummytunheader.GetSpecificloadsheet(Production_Date, Flockman_Code);
-                foreach(var _itmHeader in _dummyheaderList)
+                foreach (var _itmHeader in _dummyheaderList)
                 {
                     TunnelHeader _tunnelheader = new TunnelHeader()
                     {
@@ -343,7 +339,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                     var _tunnelheaderModel = await _global.tunnelheader.Insert_TunnelHeader(_tunnelheader);
 
                     var _tundetialsList = await _global.dummytundetails.GetSpecifictundetails(_tunnelheaderModel.LoadDate, _tunnelheaderModel.AndroidLoadSheet);
-                    foreach(var _itmdetails in _tundetialsList)
+                    foreach (var _itmdetails in _tundetialsList)
                     {
                         TunnelDetails _tunnedetails = new TunnelDetails()
                         {
@@ -362,7 +358,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                         };
 
                         var _isExistcount = await _global.tunneldetails.Getexistcount(_tunnedetails.Production_Date, _tunnedetails.Remarks, _tunnedetails.AndroidLoadSheet);
-                        if(_isExistcount == 0)
+                        if (_isExistcount == 0)
                         {
                             await _global.tunneldetails.Insert_TunnelDetails(_tunnedetails);
                         }
@@ -375,14 +371,11 @@ namespace RTLFarm.ViewModels.BuildingViewModel
 
                 _loading.Dispose();
                 await _global.configurationService.MessageAlert("Successfully Save");
-                await OnAddlogs(UserModel.SalesmanCode, UserModel.UserFullName, UserModel.UserRole, TokenCons.IsSuccess, $"Create loadsheet {Loadsheet_Code}", TokenCons.IsProcessing);
-
                 await OnClose();
             }
             catch (Exception ex)
             {
                 await _global.configurationService.MessageAlert(ex.Message);
-                await OnAddlogs(UserModel.SalesmanCode, UserModel.UserFullName, UserModel.UserRole, TokenCons.IsError, ex.Message, TokenCons.IsFailed);
                 _loading.Dispose();
                 return;
             }
@@ -396,7 +389,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             int _returnlsCount = 0;
 
             _returnlsCount = await _global.tunnelheader.GetSpecificcount(Production_Date, Flockman_Code, _buildingLoc);
-           
+
             var _countLength = _returnlsCount.ToString().Length;
             var _usercodeLength = Flockman_Code.Substring(Flockman_Code.Length - 3);
             if (_returnlsCount == 0)
@@ -445,7 +438,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             return _returnList;
         }
         private async Task OnClose()
-        {           
+        {
             var route = $"/{nameof(LoadSheetListPage)}";
             await Shell.Current.GoToAsync(route);
         }

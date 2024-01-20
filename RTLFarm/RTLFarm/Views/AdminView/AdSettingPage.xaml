@@ -336,7 +336,7 @@
                                                             </Label.FormattedText>
                                                         </Label>
                                                         <Frame.GestureRecognizers>
-                                                            <TapGestureRecognizer Command="{Binding OutletUpCommand}"/>
+                                                            <TapGestureRecognizer Command="{Binding DeleteAllCommand}"/>
                                                         </Frame.GestureRecognizers>
                                                     </Frame>
                                                     <BoxView Grid.Row="0" Grid.Column="3" BackgroundColor="{DynamicResource Primary}"></BoxView>
@@ -372,7 +372,7 @@
                                                 </StackLayout>
                                             </Frame>
                                             <RefreshView IsRefreshing="{Binding IsRefreshTrans}" Command="{Binding RefreshTransCommand}" Margin="0" Padding="0">
-                                                <CollectionView ItemsSource="{Binding TunnelHeader_List}"
+                                                <CollectionView ItemsSource="{Binding TunnHeaderList}"
                                                                 SelectedItem="{Binding Select_TunHeader}"
                                                                 SelectionChangedCommand="{Binding SelectCommand}"
                                                                 SelectionMode="Single"

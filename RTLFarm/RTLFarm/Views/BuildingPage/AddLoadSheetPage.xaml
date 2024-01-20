@@ -52,28 +52,29 @@
                     <StackLayout Orientation="Horizontal" BackgroundColor="Transparent">
                         <Label Text="{x:Static fontAwsome:FontAwesomeIcons.ArrowAltCircleRight}" FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
                         <Picker Title="SELECT STATUS"
-                                ItemsSource="{Binding StatusType_List}"
-                                ItemDisplayBinding="{Binding Egg_Code}"
-                                SelectedItem="{Binding SelectStatustype}"
-                                TitleColor="Black"
-                                Margin="0"
-                                FontSize="Title"
-                                FontAttributes="Bold"
-                                HorizontalOptions="FillAndExpand"/>
+                ItemsSource="{Binding StatusType_List}"
+                ItemDisplayBinding="{Binding Egg_Code}"
+                SelectedItem="{Binding SelectStatustype}"
+                                TextColor="Black"
+                TitleColor="Black"
+                Margin="0"
+                FontSize="Title"
+                FontAttributes="Bold"
+                HorizontalOptions="FillAndExpand"/>
                     </StackLayout>
                 </Frame>
 
                 <Frame Margin="35,5,5,5" Padding="5,0,0,0" IsVisible="{Binding Is_Substatus}" BackgroundColor="Transparent" HasShadow="True" BorderColor="{DynamicResource Secondary}">
                     <StackLayout Orientation="Horizontal" BackgroundColor="Transparent">
                         <Label Text="{x:Static fontAwsome:FontAwesomeIcons.ArrowAltCircleRight}" FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
-                        <Picker Title="SELECT SUB STATUS" ItemsSource="{Binding SubStatusType_List}" ItemDisplayBinding="{Binding Egg_Desc}" SelectedItem="{Binding SelectSubStatustype}" TitleColor="Black" Margin="0" FontSize="Title" FontAttributes="Bold" HorizontalOptions="FillAndExpand"/>
+                        <Picker Title="SELECT SUB STATUS" ItemsSource="{Binding SubStatusType_List}" ItemDisplayBinding="{Binding Egg_Desc}" TextColor="Black" SelectedItem="{Binding SelectSubStatustype}" TitleColor="Black" Margin="0" FontSize="Title" FontAttributes="Bold" HorizontalOptions="FillAndExpand"/>
                     </StackLayout>
                 </Frame>
 
                 <Frame Margin="5" Padding="5,0,0,0" BackgroundColor="Transparent" HasShadow="False" >
                     <StackLayout Orientation="Horizontal">
                         <Label Text="{x:Static fontAwsome:FontAwesomeIcons.Egg}" FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
-                        <Entry Text="{Binding Egg_Quantity}" TextChanged="OnTextChanged"  FontFamily="FAS" PlaceholderColor="Gray" Placeholder="Quantity Pieces" HorizontalOptions="FillAndExpand" FontAttributes="Bold" HorizontalTextAlignment="Center" FontSize="Title" Keyboard="Numeric" MaxLength="9" IsEnabled="{Binding IsEnable_QTY}"/>
+                        <Entry Text="{Binding Egg_Quantity}" TextChanged="OnTextChanged" TextColor="Black" FontFamily="FAS" PlaceholderColor="Gray" Placeholder="Quantity Pieces" HorizontalOptions="FillAndExpand" FontAttributes="Bold" HorizontalTextAlignment="Center" FontSize="Title" Keyboard="Numeric" MaxLength="9" IsEnabled="{Binding IsEnable_QTY}"/>
                         
                         <Button Command="{Binding SaveLSCommand}" Text="ADD" TextColor="White" FontFamily="FS" Padding="5,0,0,0" Margin="3" CornerRadius="5" FontSize="Title" FontAttributes="Bold" IsEnabled="{Binding IsEnable_QTY}">
                             <Button.ImageSource>

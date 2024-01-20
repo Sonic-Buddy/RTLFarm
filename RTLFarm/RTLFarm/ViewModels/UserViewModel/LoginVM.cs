@@ -114,9 +114,9 @@ namespace RTLFarm.ViewModels.UserViewModel
                 IsBtnpassunhide = true;
                 IsReadusername = false;
 
-                Username = "proi113";
+                //Username = "proi113";
                 //Username = "user101";
-                Password = "1234";
+                //Password = "1234";
 
                 IsRegister = Preferences.Get("iSregistered", false);
 

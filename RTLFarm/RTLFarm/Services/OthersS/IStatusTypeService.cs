@@ -14,5 +14,6 @@ namespace RTLFarm.Services.OthersS
         Task<IEnumerable<StatusType_Model>> GetapiStatustypemaster();
         Task<IEnumerable<StatusType_Model>> GetStatustypemaster();
         Task<IEnumerable<StatusType_Model>> GetSubStatustypemaster(string _eggcode);
+        Task<List<StatusType_Model>> GetSubStatustypeList(string _eggcode);
     }
 }

@@ -71,7 +71,7 @@
                 <Frame Margin="5" Padding="5,0,0,0" >
                     <StackLayout Orientation="Horizontal">
                         <Label Text="{x:Static fontAwsome:FontAwesomeIcons.Truck}" FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
-                        <Picker Title="{Binding Plate_Number}" ItemsSource="{Binding TruckMaster_List}" ItemDisplayBinding="{Binding TruckPlateNo}" SelectedItem="{Binding SelectTruckMaster}" IsEnabled="{Binding IsClose_Status}" TitleColor="Black" Margin="0" FontSize="Title" FontAttributes="Bold" HorizontalOptions="FillAndExpand"/>
+                        <Picker Title="{Binding Plate_Number}" TextColor="Black" ItemsSource="{Binding TruckMaster_List}" ItemDisplayBinding="{Binding TruckPlateNo}" SelectedItem="{Binding SelectTruckMaster}" IsEnabled="{Binding IsClose_Status}" TitleColor="Black" Margin="0" FontSize="Title" FontAttributes="Bold" HorizontalOptions="FillAndExpand"/>
                     </StackLayout>
                 </Frame>
                 

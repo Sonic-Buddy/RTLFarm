@@ -25,6 +25,7 @@ namespace RTLFarm.Services.BuildingS
         Task<IEnumerable<TunnelHeader>> GetapiTunHeaderGenerated();
         Task<IEnumerable<TunnelHeader>> GetapiSpecificlist(string _flockmanCode, string _buildingCode);
         Task<IEnumerable<TunnelHeader>> GetTunnelheadermaster();
+        Task<List<TunnelHeader>> GetTunnelheaderList();
         Task<TunnelHeader> GetSpecificmodel(string _usercode, string _subcode, string _loadsheet);
         Task<IEnumerable<TunnelHeader>> GetTunheaderbyflockman(string _flockmanCode);
         Task<IEnumerable<TunnelHeader>> GetSpecifictunheader(TunnelHeader _obj, string _type);

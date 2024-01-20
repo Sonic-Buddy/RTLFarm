@@ -143,6 +143,22 @@ namespace RTLFarm.ViewModels.AdminVM
                 
             }
         }
+
+        List<TunnelHeader> _tunnheader;
+        public List<TunnelHeader> TunnHeaderList
+        {
+            get { return _tunnheader; }
+            set
+            {
+                if (_tunnheader != value)
+                {
+                    _tunnheader = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         public AsyncCommand RefreshCommand { get; }
         public AsyncCommand IsChangeIPCommand { get; }
         public AsyncCommand IsNotChangeIPCommand { get; }
@@ -155,6 +171,7 @@ namespace RTLFarm.ViewModels.AdminVM
         public AsyncCommand BtnTestCommand { get; }
         public AsyncCommand DelHarvestCommand { get; }
         public AsyncCommand SelectCommand { get; set; }
+        public AsyncCommand DeleteAllCommand { get; set; }
 
         public ObservableRangeCollection<ConfigurationDeviceModel> IP_List { get; set; }
         public ObservableRangeCollection<TunnelHeader> TunnelHeader_List { get; set; }
@@ -180,6 +197,7 @@ namespace RTLFarm.ViewModels.AdminVM
             RefreshLogsCommand = new AsyncCommand(OnRefreshLogs);
             DelHarvestCommand = new AsyncCommand(OnDeletebydata);
             BtnTestCommand = new AsyncCommand(OnSyncuserlog);
+            DeleteAllCommand = new AsyncCommand(OnDeleteAllrecord);
         }
         private async Task OnRefresh()
         {            
@@ -314,12 +332,12 @@ namespace RTLFarm.ViewModels.AdminVM
         {
             var _tunnelheaderList = await _global.tunnelheader.GetTunheaderbyflockman(_usercode);
             var _tunheadersortdate = _tunnelheaderList.OrderByDescending(a => a.LoadDate).ToList();
-            TunnelHeader_List.Clear();
-            TunnelHeader_List.ReplaceRange(_tunheadersortdate);
+            TunnHeaderList.Clear();
+            TunnHeaderList.AddRange(_tunheadersortdate);
         }
         private async Task OnRefreshTrans()
         {
-            var _tunnelheaderList = await _global.tunnelheader.GetTunnelheadermaster();
+            var _tunnelheaderList = await _global.tunnelheader.GetTunnelheaderList();
             if(_tunnelheaderList.Count().Equals(0))
             {
                 await _global.configurationService.MessageAlert("No record found.");
@@ -329,8 +347,9 @@ namespace RTLFarm.ViewModels.AdminVM
             }
 
             var _tunheadersortdate = _tunnelheaderList.OrderByDescending(a => a.LoadDate).ToList();
-            TunnelHeader_List.Clear();
-            TunnelHeader_List.ReplaceRange(_tunheadersortdate);
+            //TunnHeaderList.Clear();
+            //TunnHeaderList.AddRange(_tunheadersortdate);
+            TunnHeaderList = _tunheadersortdate;
 
             await OnGenerateUser();
             IsRefreshTrans = false;
@@ -409,6 +428,13 @@ namespace RTLFarm.ViewModels.AdminVM
             await Shell.Current.GoToAsync(route);
         }
 
+        private async Task OnDeleteAllrecord()
+        {
+            await _global.tunnelheader.DeleteAllTunHeader();
+            await _global.tunneldetails.DeleteAllTunDetails();
+            await _global.logsService.DeletePerWeeks();
+            await _global.configurationService.MessageAlert("Delete all data successfully");
+        }
         private async Task OnDeletebydata()
         {
             try

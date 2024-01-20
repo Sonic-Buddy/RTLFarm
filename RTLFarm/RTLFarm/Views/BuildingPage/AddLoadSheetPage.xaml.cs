@@ -31,5 +31,10 @@ namespace RTLFarm.Views.BuildingPage
             if (!double.TryParse(e.NewTextValue, out _))
                 ((Entry)sender).Text = e.OldTextValue;
         }
+
+        private void Picker_MeasureInvalidated(object sender, EventArgs e)
+        {
+
+        }
     }
 }
