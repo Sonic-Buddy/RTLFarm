@@ -24,10 +24,10 @@ namespace RTLFarm.ViewModels.BuildingViewModel
     {
         GlobalDependencyServices _global = new GlobalDependencyServices();
 
-        bool _isrefresh, _ishidebtnsync, _isunhidebtnsync, _isclosestatus, _isselecttrack;
+        bool _isrefresh, _ishidebtnsync, _isunhidebtnsync, _isclosestatus, _isselecttrack, _ishidereason, _ishideeditbtn;
         double _grandtotalegg;
         int _squencecount;
-        string _loadsheetcode, _platenumber, _buildinglocation;
+        string _loadsheetcode, _platenumber, _buildinglocation, _remarkseditor, _reasontype, _parameterref, _btnsaveedit;
 
         TunnelHeader _tunnelheadermodel;
         TunHeaderView _tunheader;
@@ -37,10 +37,16 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         public bool IsUnHidebtnSync { get => _isunhidebtnsync; set => SetProperty(ref _isunhidebtnsync, value); }
         public bool IsClose_Status { get => _isclosestatus; set => SetProperty(ref _isclosestatus, value); }
         public bool Is_SelectTrack { get => _isselecttrack; set => SetProperty(ref _isselecttrack, value); }
+        public bool Is_Hidereason { get => _ishidereason; set => SetProperty(ref _ishidereason, value); }
+        public bool Is_Hideeditbtn { get => _ishideeditbtn; set => SetProperty(ref _ishideeditbtn, value); }
         public int Squence_Count { get => _squencecount; set => SetProperty(ref _squencecount, value); }
         public string LoadSheet_Code { get => _loadsheetcode; set => SetProperty(ref _loadsheetcode, value); }
         public string Plate_Number { get => _platenumber; set => SetProperty(ref _platenumber, value); }
         public string Building_Location { get => _buildinglocation; set => SetProperty(ref _buildinglocation, value); }
+        public string Parameter_Ref { get => _parameterref; set => SetProperty(ref _parameterref, value); }
+        public string Remarks_Editor { get => _remarkseditor; set => SetProperty(ref _remarkseditor, value); }
+        public string ReasonType { get => _reasontype; set => SetProperty(ref _reasontype, value); }
+        public string Btn_SaveEdit { get => _btnsaveedit; set => SetProperty(ref _btnsaveedit, value); }
         public TunnelHeader TunnelHeader_Model { get => _tunnelheadermodel; set => SetProperty(ref _tunnelheadermodel, value); }
         public TunHeaderView TunHeader { get => _tunheader; set => SetProperty(ref _tunheader, value); }
 
@@ -66,10 +72,26 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             }
         }
 
+        ReasonModel _selectreason;
+        public ReasonModel SelectReason
+        {
+            get => _selectreason;
+            set
+            {
+                if (_selectreason == value) { return; }
+                _selectreason = value;
+                OnPropertyChanged();
+                ReasonType = value.ReasonCodeType;
+                //OnSubStatustype(value.Egg_Code);
+            }
+        }
+
         public AsyncCommand RefreshCommand { get; set; }
         public AsyncCommand SyncloadsheetCommand { get; set; }
         public AsyncCommand ClosedCommand { get; set; }
+        public AsyncCommand EditCommand { get; set; }
 
+        public ObservableRangeCollection<ReasonModel> Reason_List { get; set; }
         public ObservableRangeCollection<TunnelDetails> TunnelDetails_List { get; set; }
         public ObservableRangeCollection<TruckMaster_Model> TruckMaster_List { get; set; }
         //public TunnelHeader TunHeader = new TunnelHeader();
@@ -78,9 +100,11 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         {
             TunnelDetails_List = new ObservableRangeCollection<TunnelDetails>();
             TruckMaster_List = new ObservableRangeCollection<TruckMaster_Model>();
+            Reason_List = new ObservableRangeCollection<ReasonModel>();
 
             RefreshCommand = new AsyncCommand(OnRefresh);
             ClosedCommand = new AsyncCommand(OnClose);
+            EditCommand = new AsyncCommand(OnEditLoadsheet);
             SyncloadsheetCommand = new AsyncCommand(OnSpecSyncapi);
         }
 
@@ -90,8 +114,10 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             try
             {
                 IsRefresh = true;
+                Btn_SaveEdit = "SYNC LOADSHEET";
                 IsHidebtnSync = false;
-                IsUnHidebtnSync = false;
+                IsUnHidebtnSync = false;                
+                Is_Hidereason = false;
                 TunHeader = TokenSetGet.Get_Tunnel_Header();
                 Building_Location = await _global.buildinglocation.GetBuildingLocation(TunHeader.Building_Location, "Description");
                 Plate_Number = "SELECT TRUCK";
@@ -106,13 +132,15 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                 await OnLoadTruckMaster();
                 await OnGrandtotalegg(TunHeader.LoadDate, TunHeader.AndroidLoadSheet);
 
-                if (TunHeader.Load_Status == TokenCons.Closed || TunHeader.Load_Status == TokenCons.IsCancel)
+                if (TunHeader.Load_Status == TokenCons.Closed)
                 {
                     IsHidebtnSync = false;
-                    IsUnHidebtnSync = true;
+                    IsUnHidebtnSync = true;                    
+                    Is_Hideeditbtn = true;
                 }
                 else
                 {
+                    Is_Hideeditbtn = false;
                     IsHidebtnSync = true;
                     IsUnHidebtnSync = false;
                 }
@@ -124,7 +152,24 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                 return;
             }
         }
+        private async Task OnEditLoadsheet()
+        {
+            await Task.Delay(100);
 
+            Btn_SaveEdit = "EDIT LOADSHEET";
+
+            var _masterlist = await _global.reasons.GetSpecificList("DRIVER");
+            Reason_List.Clear();
+            Reason_List.ReplaceRange(_masterlist);
+
+            IsClose_Status = true;
+            IsHidebtnSync = true;
+            Is_Hideeditbtn = false;
+            Is_Hidereason = true;
+
+
+            Parameter_Ref = "For_Edit";
+        }
         private async Task OnLoadTunneldetails(TunHeaderView _obj)
         {
             var _tundetailList = await _global.tunneldetails.GetTunneldetailsproduction(_obj.LoadDate, _obj.AndroidLoadSheet);
@@ -179,15 +224,6 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             _loading.Show();
             try
             {
-
-                if(Plate_Number == "SELECT TRUCK" || string.IsNullOrEmpty(Plate_Number) || string.IsNullOrWhiteSpace(Plate_Number))
-                {
-                    await _global.configurationService.MessageAlert("Please choose a truck");
-                    await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsError, $"Vehicle truck, not selected", TokenCons.IsFailed);
-                    _loading.Dispose();
-                    return;
-                }
-
                 bool _response = await _global.configurationService.GetInternetConnection();
                 if (!_response)
                 {
@@ -195,78 +231,146 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                     await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsNonet, $"No internet connection", TokenCons.IsFailed);
                     return;
                 }
-                    
-                bool _confirmation = await App.Current.MainPage.DisplayAlert("Message Alert", "Trays can't fit the Tray Capacity of the Truck.", "Yes", "No");
-                if (_confirmation == false)
+
+                if (Parameter_Ref == "For_Edit")
                 {
-                    _loading.Dispose();
-                    await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsError, $"Trays can't fit the Tray Capacity of the Truck. A:{_confirmation}", TokenCons.IsFailed);
-                    return;
-                }               
-
-                await OnGenerateLS();
-
-                TunnelHeader _tunnelheader = new TunnelHeader()
-                {
-                    AGTId = TunHeader.AGTId,
-                    User = TunHeader.User,
-                    Plate_Number = Plate_Number,
-                    DateAdded = TunHeader.DateAdded,
-                    Status_Checked = TunHeader.Status_Checked,
-                    DateEdited = TunHeader.DateEdited,
-                    User_Checked = TunHeader.User_Checked,
-                    LoadDate = TunHeader.LoadDate,
-                    LoadNumber = LoadSheet_Code,
-                    LoadSequence = Squence_Count,
-                    Load_Status = TokenCons.IsProcessing,
-                    UserID = TunHeader.UserID,
-                    Building_Location = TunHeader.Building_Location,
-                    TruckDriverName = TunHeader.TruckDriverName,
-                    Override_Status = TunHeader.Override_Status,
-                    CSRefNo = TunHeader.CSRefNo,
-                    AndroidLoadSheet = TunHeader.AndroidLoadSheet,
-                    ReasonForReject = TunHeader.ReasonForReject,
-                    CancelledLoadSheet = TunHeader.CancelledLoadSheet,
-                    Remarks = TunHeader.Remarks,
-                    User_Code = TunHeader.User_Code
-                };
-
-                var _Isexistapi = await _global.tunnelheader.GetapiExistloadsheet(_tunnelheader.User_Code, _tunnelheader.LoadDate, _tunnelheader.AndroidLoadSheet);
-                if (_Isexistapi != 0)
-                {
-                    await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsError, $"Create loadsheet number {_tunnelheader.AndroidLoadSheet} is already exist", TokenCons.IsFailed);
-                    return;
-                }
-
-                var _tunheaderModel = await _global.tunnelheader.PostapiTunnelheader(_tunnelheader);
-
-                var _tundetailsList = await _global.tunneldetails.GetTunneldetailsproduction(_tunnelheader.LoadDate, _tunnelheader.AndroidLoadSheet);
-                foreach (var _itmdetails in _tundetailsList)
-                {
-                    TunnelDetails _tunnedetails = new TunnelDetails()
+                    bool _confirmation = await App.Current.MainPage.DisplayAlert("Message Alert", "Are you sure to edit this loadsheet?", "Yes", "No");
+                    if (_confirmation == false)
                     {
-                        LoadNumber = _tunnelheader.LoadNumber,
-                        Egg_Qty = _itmdetails.Egg_Qty,
-                        Egg_StatType = _itmdetails.Egg_StatType,
-                        Load_Status = _tunnelheader.Load_Status,
-                        DateCreated = _itmdetails.DateCreated,
-                        DateUpdated = _itmdetails.DateUpdated,
-                        Remarks = _itmdetails.Remarks,
-                        Egg_Location = _itmdetails.Egg_Location,
-                        Production_Date = _itmdetails.Production_Date,
-                        Sequence = _itmdetails.Sequence,
-                        UserSequence = _itmdetails.UserSequence,
-                        AndroidLoadSheet = _tunnelheader.AndroidLoadSheet
+                        _loading.Dispose();
+                        await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsError, $"Are you sure to edit this loadsheet?. A:{_confirmation}", TokenCons.IsFailed);
+                        return;
+                    }
+
+                    if (string.IsNullOrEmpty(ReasonType) || string.IsNullOrWhiteSpace(ReasonType))
+                    {
+                        await _global.configurationService.MessageAlert("Please enter reason for edit");
+                        await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsError, $"No reason type enter.", TokenCons.IsFailed);
+                        _loading.Dispose();
+                        return;
+                    }
+
+                    string _conbineError = $"{ReasonType}--{Remarks_Editor}";
+
+                    TunnelHeader _tunnelheader = new TunnelHeader()
+                    {
+                        AGTId = TunHeader.AGTId,
+                        User = TunHeader.User,
+                        Plate_Number = Plate_Number,
+                        DateAdded = TunHeader.DateAdded,
+                        Status_Checked = TunHeader.Status_Checked,
+                        DateEdited = TunHeader.DateEdited,
+                        User_Checked = TunHeader.User_Checked,
+                        LoadDate = TunHeader.LoadDate,
+                        LoadNumber = TunHeader.LoadNumber,
+                        LoadSequence = TunHeader.LoadSequence,
+                        Load_Status = TokenCons.IsProcessing,
+                        UserID = TunHeader.UserID,
+                        Building_Location = TunHeader.Building_Location,
+                        TruckDriverName = TunHeader.TruckDriverName,
+                        Override_Status = TunHeader.Override_Status,
+                        CSRefNo = TunHeader.CSRefNo,
+                        AndroidLoadSheet = TunHeader.AndroidLoadSheet,
+                        ReasonForReject = TunHeader.ReasonForReject,
+                        CancelledLoadSheet = "Edited",
+                        Remarks = _conbineError,
+                        User_Code = TunHeader.User_Code
                     };
 
-                    await _global.tunneldetails.PostapiTunneldetails(_tunnedetails);
+                    await _global.tunnelheader.PutapiHeader(_tunnelheader, "For_Edit");
+                    await OnUpdateproduction(_tunnelheader);
+                    await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, "Edit", $"Successfully edit loadsheet {_tunnelheader.AndroidLoadSheet}/{_tunnelheader.LoadNumber}", _tunnelheader.Load_Status);
+                    await OnSyncuserlog();
+                    await _global.configurationService.MessageAlert("Successfully edit");
+                    await OnClose();
+                    _loading.Dispose();
                 }
+                else
+                {
+                    //saving in the live server
 
-                await OnUpdateproduction(_tunnelheader);
-                
-                await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, "Sync", $"Successfully sync loadsheet {_tunnelheader.AndroidLoadSheet}/{_tunnelheader.LoadNumber}", _tunnelheader.Load_Status);
-                await OnSyncuserlog();
-                _loading.Dispose();
+                    if (Plate_Number == "SELECT TRUCK" || string.IsNullOrEmpty(Plate_Number) || string.IsNullOrWhiteSpace(Plate_Number))
+                    {
+                        await _global.configurationService.MessageAlert("Please choose a truck");
+                        await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsError, $"Vehicle truck, not selected", TokenCons.IsFailed);
+                        _loading.Dispose();
+                        return;
+                    }                   
+
+                    bool _confirmation = await App.Current.MainPage.DisplayAlert("Message Alert", "Trays can't fit the Tray Capacity of the Truck.", "Yes", "No");
+                    if (_confirmation == false)
+                    {
+                        _loading.Dispose();
+                        await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsError, $"Trays can't fit the Tray Capacity of the Truck. A:{_confirmation}", TokenCons.IsFailed);
+                        return;
+                    }
+
+                    await OnGenerateLS();
+
+                    TunnelHeader _tunnelheader = new TunnelHeader()
+                    {
+                        AGTId = TunHeader.AGTId,
+                        User = TunHeader.User,
+                        Plate_Number = Plate_Number,
+                        DateAdded = TunHeader.DateAdded,
+                        Status_Checked = TunHeader.Status_Checked,
+                        DateEdited = TunHeader.DateEdited,
+                        User_Checked = TunHeader.User_Checked,
+                        LoadDate = TunHeader.LoadDate,
+                        LoadNumber = LoadSheet_Code,
+                        LoadSequence = Squence_Count,
+                        Load_Status = TokenCons.IsProcessing,
+                        UserID = TunHeader.UserID,
+                        Building_Location = TunHeader.Building_Location,
+                        TruckDriverName = TunHeader.TruckDriverName,
+                        Override_Status = TunHeader.Override_Status,
+                        CSRefNo = TunHeader.CSRefNo,
+                        AndroidLoadSheet = TunHeader.AndroidLoadSheet,
+                        ReasonForReject = TunHeader.ReasonForReject,
+                        CancelledLoadSheet = TunHeader.CancelledLoadSheet,
+                        Remarks = TunHeader.Remarks,
+                        User_Code = TunHeader.User_Code
+                    };
+
+                    var _Isexistapi = await _global.tunnelheader.GetapiExistloadsheet(_tunnelheader.User_Code, _tunnelheader.LoadDate, _tunnelheader.AndroidLoadSheet);
+                    if (_Isexistapi != 0)
+                    {
+                        await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, TokenCons.IsError, $"Create loadsheet number {_tunnelheader.AndroidLoadSheet} is already exist", TokenCons.IsFailed);
+                        return;
+                    }
+
+                    var _tunheaderModel = await _global.tunnelheader.PostapiTunnelheader(_tunnelheader);
+
+                    var _tundetailsList = await _global.tunneldetails.GetTunneldetailsproduction(_tunnelheader.LoadDate, _tunnelheader.AndroidLoadSheet);
+                    foreach (var _itmdetails in _tundetailsList)
+                    {
+                        TunnelDetails _tunnedetails = new TunnelDetails()
+                        {
+                            LoadNumber = _tunnelheader.LoadNumber,
+                            Egg_Qty = _itmdetails.Egg_Qty,
+                            Egg_StatType = _itmdetails.Egg_StatType,
+                            Load_Status = _tunnelheader.Load_Status,
+                            DateCreated = _itmdetails.DateCreated,
+                            DateUpdated = _itmdetails.DateUpdated,
+                            Remarks = _itmdetails.Remarks,
+                            Egg_Location = _itmdetails.Egg_Location,
+                            Production_Date = _itmdetails.Production_Date,
+                            Sequence = _itmdetails.Sequence,
+                            UserSequence = _itmdetails.UserSequence,
+                            AndroidLoadSheet = _tunnelheader.AndroidLoadSheet
+                        };
+
+                        await _global.tunneldetails.PostapiTunneldetails(_tunnedetails);
+                    }
+
+                    await OnUpdateproduction(_tunnelheader);
+
+                    await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, "Sync", $"Successfully sync loadsheet {_tunnelheader.AndroidLoadSheet}/{_tunnelheader.LoadNumber}", _tunnelheader.Load_Status);
+                    await OnSyncuserlog();
+                    await _global.configurationService.MessageAlert("Sync successfully");
+                    await OnClose();
+                    _loading.Dispose();
+                }
             }
             catch (Exception ex)
             {
@@ -303,14 +407,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                     CancelledLoadSheet = _obj.CancelledLoadSheet,
                     Remarks = _obj.Remarks,
                     User_Code = _obj.User_Code
-                };
-
-                var _Isexistapi = await _global.tunnelheader.GetExistloadsheet(_tunnelheader);
-                if (_Isexistapi != 0)
-                {
-                    await _global.configurationService.MessageAlert("Somethings is missing");
-                    return;
-                }
+                };             
 
                 await _global.tunnelheader.Update_TunnelHeaderStatus(_tunnelheader);
 
@@ -336,9 +433,6 @@ namespace RTLFarm.ViewModels.BuildingViewModel
 
                     await _global.tunneldetails.Update_TunnelDetails(_tunnedetails);
                 }
-
-                await _global.configurationService.MessageAlert("Sync successfully");
-                await OnClose();
             }
             catch (Exception ex)
             {
@@ -426,13 +520,23 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         }
         private async Task OnSyncuserlog()
         {
-            DateTime _todayDate = DateTime.Now.AddDays(-1);
-            var _logmasterlist = await _global.logsService.Getlogsmasterlist();
-            var _sortdatalist = _logmasterlist.Where(a => a.Logs_Create.Date > _todayDate.Date).ToList();
-            foreach(var _item in _sortdatalist)
+            try
             {
-                await _global.logsService.Postlogs_API(_item);
+                DateTime _todayDate = DateTime.Now.AddDays(-1);
+                var _logmasterlist = await _global.logsService.Getlogsmasterlist();
+                var _sortdatalist = _logmasterlist.Where(a => a.Logs_Create.Date > _todayDate.Date).ToList();
+
+                foreach (var _item in _sortdatalist)
+                {
+                    await _global.logsService.Postlogs_API(_item);
+                }
             }
+            catch
+            {
+                await OnClose();
+                throw new Exception();
+            }
+            
         }
         private async Task OnClose()
         {

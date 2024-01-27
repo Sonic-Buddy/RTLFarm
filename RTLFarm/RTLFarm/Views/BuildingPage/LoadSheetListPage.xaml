@@ -65,7 +65,7 @@
                         </StackLayout>
                     </Frame>
                     <RefreshView IsRefreshing="{Binding IsRefresh}" Command="{Binding RefreshCommand}" BackgroundColor="Transparent">
-                        <CollectionView ItemsSource="{Binding TunnelHeader_List}" SelectedItem="{Binding Select_TunHeader}" SelectionChangedCommand="{Binding SelectCommand}"
+                        <CollectionView ItemsSource="{Binding Partial_Header_List}" SelectedItem="{Binding Sel_Partialheader}" SelectionChangedCommand="{Binding SelectCommand}"
                      SelectionMode="Single"                                                        
                      x:Name="LoadsheetList"
                      RemainingItemsThreshold="1"
@@ -77,7 +77,7 @@
                                 </StackLayout>
                             </CollectionView.EmptyView>
                             <CollectionView.Header>
-                                <StackLayout Margin="0,0,0,2" BackgroundColor="Transparent">
+                                <StackLayout Margin="0,0,0,2" BackgroundColor="Transparent">                                    
                                     <Frame HasShadow="True" BorderColor="{DynamicResource Secondary}" CornerRadius="10" BackgroundColor="{DynamicResource DMSecond}" Padding="10,20">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -87,29 +87,33 @@
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"></RowDefinition>
+                                                <RowDefinition Height="Auto"></RowDefinition>
                                             </Grid.RowDefinitions>
 
-                                            <Label Grid.Column="0" Text="  LOADSHEET"  TextColor="{DynamicResource LMSecond}" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
-                                            <Label Grid.Column="1" Text="PRODUCTION DATE" TextColor="{DynamicResource LMSecond}" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                            <Label Grid.Column="0" Grid.Row="0" Text="  LOADSHEET"  TextColor="{DynamicResource LMSecond}" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                            <Label Grid.Column="1" Grid.Row="0" Text="PRODUCTION DATE" TextColor="{DynamicResource LMSecond}" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
                                             <!--
                                             <Label Grid.Column="2" Text="STATUS" TextColor="{DynamicResource LMSecond}" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
                                             -->
 
-                                            <Picker Title="{Binding Status_Title}" Grid.Column="2" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" ItemsSource="{Binding Status_List}" ItemDisplayBinding="{Binding Egg_Desc}"
+                                            <Picker Title="{Binding Status_Title}" Grid.Column="2" Grid.Row="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" ItemsSource="{Binding Status_List}" ItemDisplayBinding="{Binding Egg_Desc}"
         SelectedItem="{Binding SelectStatusList}"
         TitleColor="{DynamicResource LMSecond}"
                                                     TextColor="{DynamicResource LMSecond}"
         Margin="0,0,3,0"
         FontSize="Subtitle"
         FontAttributes="Bold"/>
+                                            
+                                            
                                         </Grid>
                                     </Frame>
+                                    
                                 </StackLayout>
                             </CollectionView.Header>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <StackLayout Margin="0,1">
-                                        <Frame HasShadow="True" BorderColor="{DynamicResource Secondary}" CornerRadius="10" Padding="10">
+                                    <StackLayout Margin="0,1">                                        
+                                        <Frame HasShadow="True" BorderColor="{Binding Status_Color}" CornerRadius="10" Padding="10">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -120,9 +124,24 @@
                                                     <RowDefinition Height="Auto"></RowDefinition>
                                                 </Grid.RowDefinitions>
 
-                                                <Label Grid.Column="0" Grid.Row="0" Text="{Binding AndroidLoadSheet}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
-                                                <Label Grid.Column="1" Grid.Row="0" Text="{Binding LoadDate,StringFormat='{0:MM-dd-yyyy}'}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
-                                                <Label Grid.Column="2" Grid.Row="0" Text="{Binding Load_Status}" TextColor="Black" FontSize="Header" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                <Label Grid.Column="0" Grid.Row="0" Text="{Binding Partial_Header.AndroidLoadSheet}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                <Label Grid.Column="1" Grid.Row="0" Text="{Binding Partial_Header.LoadDate,StringFormat='{0:MM-dd-yyyy}'}" TextColor="Black" FontSize="Subtitle" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                
+                                                
+                                                <Label Grid.Column="2" Grid.Row="0" Text="{Binding Partial_Header.Load_Status}" TextColor="Black" FontSize="Header" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"></Label>
+                                                <!--
+                                                <Label Grid.Column="2" Grid.Row="0" TextColor="Black" FontSize="Header" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center">
+                                                    <Label.FormattedText>
+                                                        <FormattedString>
+                                                            <Span Text="{Binding Partial_Header.Load_Status}" FontAttributes="Bold" TextColor="Black"/>
+                                                            <Span Text="/" FontAttributes="Bold" TextColor="Black"/>
+                                                            <Span Text="{Binding Partial_Header.CancelledLoadSheet}" FontAttributes="Bold" TextColor="Black"/>
+                                                            
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
+                                                </Label>
+                                                
+                                                -->
                                             </Grid>
                                         </Frame>
                                     </StackLayout>
@@ -131,8 +150,33 @@
                         </CollectionView>
                     </RefreshView>
                 </StackLayout>
-
-                <StackLayout BackgroundColor="Transparent" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand" Padding="10,5" Margin="0" HeightRequest="55">
+                <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="FillAndExpand" Orientation="Horizontal" Margin="0" Padding="0" BackgroundColor="Transparent">
+                    <Path Fill="#2196F3" Stroke="Black">
+                        <Path.Data>
+                            <EllipseGeometry Center="15,15" RadiusX="10" RadiusY="10" />
+                        </Path.Data>
+                    </Path>
+                    <Label Text="PROCESSING     "  TextColor="{DynamicResource DMSecond}" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
+                    <Path Fill="Forestgreen" Stroke="Black">
+                        <Path.Data>
+                            <EllipseGeometry Center="15,15" RadiusX="10" RadiusY="10" />
+                        </Path.Data>
+                    </Path>
+                    <Label Text="CLOSED     "  TextColor="{DynamicResource DMSecond}" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
+                    <Path Fill="#ff9933" Stroke="Black">
+                        <Path.Data>
+                            <EllipseGeometry Center="15,15" RadiusX="10" RadiusY="10" />
+                        </Path.Data>
+                    </Path>
+                    <Label Text="EDITED     "  TextColor="{DynamicResource DMSecond}" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
+                    <Path Fill="crimson" Stroke="Black">
+                        <Path.Data>
+                            <EllipseGeometry Center="15,15" RadiusX="10" RadiusY="10" />
+                        </Path.Data>
+                    </Path>
+                    <Label Text="CANCELLED      "  TextColor="{DynamicResource DMSecond}" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
+                </StackLayout>
+                <StackLayout BackgroundColor="Transparent" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand" Padding="10,5" Margin="0" HeightRequest="55">                    
                     <Button Command="{Binding LogoutCommand}" Text="LOGOUT" TextColor="White" BackgroundColor="Crimson" FontSize="Subtitle" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5">
                         <Button.ImageSource>
                             <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.SignOutAlt}"></FontImageSource>

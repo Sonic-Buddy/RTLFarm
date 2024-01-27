@@ -57,7 +57,7 @@ namespace RTLFarm.ViewModels.DialogViewModel
                 var _tunmodel = TokenSetGet.GetParamModel();
 
                 TunnelHeader = await _global.tunnelheader.GetSpecificmodel(_tunmodel.User_Code, _tunmodel.PMT_2, _tunmodel.PMT_1);
-                await OnLoadData();
+                await OnLoadData();                
                 loading.Dispose();
             }
             catch (Exception ex)
@@ -112,7 +112,7 @@ namespace RTLFarm.ViewModels.DialogViewModel
                     Load_Status = TokenCons.IsCancel,
                     UserID = TunnelHeader.UserID,
                     Building_Location = TunnelHeader.Building_Location,
-                    TruckDriverName = TokenSetGet.Get_UserModel().LoginStatus,
+                    TruckDriverName = TokenSetGet.Get_UserModel().SalesmanCode,
                     Override_Status = TunnelHeader.Override_Status,
                     CSRefNo = TunnelHeader.CSRefNo,
                     AndroidLoadSheet = TunnelHeader.AndroidLoadSheet,
@@ -131,7 +131,7 @@ namespace RTLFarm.ViewModels.DialogViewModel
                     return;
                 }
 
-                await _global.tunnelheader.PutapiHeader(_tunnelheader);
+                await _global.tunnelheader.PutapiHeader(_tunnelheader, "Update_Status");
                 await _global.tunnelheader.Update_TunnelHeaderStatus(_tunnelheader);                
 
                 var _tundetailsList = await _global.tunneldetails.GetTunneldetailsproduction(_tunnelheader.LoadDate, _tunnelheader.AndroidLoadSheet);

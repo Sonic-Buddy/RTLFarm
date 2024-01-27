@@ -205,13 +205,22 @@ namespace RTLFarm.Services.BuildingS
             return _obj;
         }
 
-        public async Task PutapiHeader(TunnelHeader _obj)
+        public async Task PutapiHeader(TunnelHeader _obj, string _foredit)
         {
             var client = ConfigurationClass.GetClient();
             var json = JsonConvert.SerializeObject(_obj);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await client.PutAsync($"api/AG_TunnelProd/AndroidUpdate/{_obj.AGTId}", content);
-            _ = response.Content.ReadAsStringAsync().Result;
+
+            if(_foredit == "For_Edit")
+            {
+                var response = await client.PutAsync($"api/AG_TunnelProd/{_obj.AGTId}", content);
+                _ = response.Content.ReadAsStringAsync().Result;
+            }
+            else
+            {
+                var response = await client.PutAsync($"api/AG_TunnelProd/AndroidUpdate/{_obj.AGTId}", content);
+                _ = response.Content.ReadAsStringAsync().Result;
+            }            
         }
 
         public async Task<TunnelHeader> Update_TunHeader(TunnelHeader _obj)
@@ -237,7 +246,6 @@ namespace RTLFarm.Services.BuildingS
             _up.ReasonForReject = _obj.ReasonForReject;
             _up.CancelledLoadSheet = _obj.CancelledLoadSheet;
             _up.Remarks = _obj.Remarks;
-
 
             _ = await db.UpdateAsync(_up);
             return _obj;

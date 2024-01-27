@@ -21,7 +21,7 @@ namespace RTLFarm.Services.BuildingS
         Task<int> GetapiExistloadsheet(string _flockmanCode, DateTime _productionDate, string _loadsheet);
         Task<int> GetapiSequenceno();
         Task<TunnelHeader> PostapiTunnelheader(TunnelHeader _obj);
-        Task PutapiHeader(TunnelHeader _obj);
+        Task PutapiHeader(TunnelHeader _obj, string _foredit);
         Task<IEnumerable<TunnelHeader>> GetapiTunHeaderGenerated();
         Task<IEnumerable<TunnelHeader>> GetapiSpecificlist(string _flockmanCode, string _buildingCode);
         Task<IEnumerable<TunnelHeader>> GetTunnelheadermaster();

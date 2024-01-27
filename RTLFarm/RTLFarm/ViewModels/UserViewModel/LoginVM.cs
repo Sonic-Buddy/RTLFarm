@@ -115,8 +115,8 @@ namespace RTLFarm.ViewModels.UserViewModel
                 IsReadusername = false;
 
                 //Username = "proi113";
-                //Username = "user101";
-                //Password = "1234";
+                Username = "user101";
+                Password = "1234";
 
                 IsRegister = Preferences.Get("iSregistered", false);
 
@@ -149,6 +149,7 @@ namespace RTLFarm.ViewModels.UserViewModel
                 IsEnable = false;
                 var _userModel = await _global.loginService.GetSpecificAccount(Username ,Password);
 
+                
                 TokenSetGet.Set_UserModel(_userModel);
                 if (_userModel == null)
                 {

@@ -20,10 +20,10 @@
     
     
     <ContentPage.Content>
-        <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-            <StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+        <ScrollView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent">
+            <StackLayout Margin="10" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
 
-                <Frame Margin="5,0" Padding="10,5" IsVisible="{Binding IsHidebtnSync}">
+                <Frame Margin="5,10,5,0" Padding="10,5" IsVisible="{Binding IsHidebtnSync}">
                     <StackLayout Orientation="Horizontal">
                         <Label Text="SUB CODE: " FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
                         <Label Text="{Binding TunHeader.AndroidLoadSheet}" FontFamily="FS" TextColor="Black" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
@@ -75,27 +75,54 @@
                     </StackLayout>
                 </Frame>
                 
-                <xct:Expander IsExpanded="True">
+
+                <!---->
+                    
+                    
+                <xct:Expander IsExpanded="True" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" IsVisible="{Binding Is_Hidereason}">
                     <xct:Expander.Header>
-                        <StackLayout Orientation="Horizontal" Margin="5,0" BackgroundColor="Transparent" Padding="3">
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="5,0" BackgroundColor="Transparent" Padding="3">
+                            <Label Text="REASON FOR EDIT" FontAttributes="Bold" FontSize="Medium" TextColor="Black"/>
+                            <Label Text="{x:Static fontAwsome:FontAwesomeIcons.ChevronDown}" FontFamily="FS" TextColor="Gray" FontAttributes="Bold" FontSize="Medium"  HorizontalOptions="EndAndExpand"/>
+                        </StackLayout>
+                    </xct:Expander.Header>
+                    <StackLayout BackgroundColor="White" Padding="3" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                    <Frame Margin="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="White" CornerRadius="10" Padding="3">
+                        <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                            <Frame Margin="5" Padding="5,0,0,0">
+                                <StackLayout Orientation="Horizontal">
+                                    <Label Text="{x:Static fontAwsome:FontAwesomeIcons.Pen}" FontFamily="FS" TextColor="Gray" FontSize="Title" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"/>
+                                    <Picker Title="SELECT REASON" ItemsSource="{Binding Reason_List}" ItemDisplayBinding="{Binding ReasonName}" SelectedItem="{Binding SelectReason}" TitleColor="Black" Margin="0" FontSize="Title" FontAttributes="Bold" HorizontalOptions="FillAndExpand"/>
+                                </StackLayout>
+                            </Frame>
+
+                            <Frame Margin="5" Padding="5,0,0,0">
+                                <StackLayout Orientation="Horizontal">
+                                    <Editor Text="{Binding Remarks_Editor}" Placeholder="Remarks (150 character only)" PlaceholderColor="Gray" Margin="0" FontSize="Subtitle" FontAttributes="Bold" HeightRequest="100" HorizontalOptions="FillAndExpand" MaxLength="150"/>
+                                </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+                </xct:Expander>                    
+
+                <xct:Expander IsExpanded="True" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+                    <xct:Expander.Header>
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="5,0" BackgroundColor="Transparent" Padding="3">
                             <Label Text="INFORMATION" FontAttributes="Bold" FontSize="Medium" TextColor="Black"/>
                             <Label Text="{x:Static fontAwsome:FontAwesomeIcons.ChevronDown}" FontFamily="FS" TextColor="Gray" FontAttributes="Bold" FontSize="Medium"  HorizontalOptions="EndAndExpand"/>
                         </StackLayout>
                     </xct:Expander.Header>
-                    <StackLayout BackgroundColor="White" Padding="3">
+                    <StackLayout BackgroundColor="Transparent" Padding="3" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="450" >
                         <RefreshView IsRefreshing="{Binding IsRefresh}" Command="{Binding RefreshCommand}">
-                            <CollectionView ItemsSource="{Binding TunnelDetails_List}"
-                            SelectionMode="Single"                                                        
-                            x:Name="LoadsheetList"
-                            RemainingItemsThreshold="1"
-                            Margin="7,15">
+                            <CollectionView ItemsSource="{Binding TunnelDetails_List}" SelectionMode="Single" x:Name="LoadsheetList" RemainingItemsThreshold="1" Margin="7,15">
                                 <CollectionView.EmptyView>
                                     <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Padding="0,10" >
                                         <Image Source="noData.png" Aspect="AspectFill" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
                                     </StackLayout>
                                 </CollectionView.EmptyView>
                                 <CollectionView.Header>
-                                    <StackLayout Margin="0,0.5">
+                                    <StackLayout Margin="0,0.5" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                                         <Frame HasShadow="True" BorderColor="LightBlue" CornerRadius="10" BackgroundColor="#1bacf5" Padding="10">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
@@ -114,7 +141,7 @@
                                 </CollectionView.Header>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <StackLayout Margin="0,0,0,3">
+                                        <StackLayout Margin="0,0,0,3" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                                             <Frame HasShadow="True" BorderColor="LightBlue" CornerRadius="10" Padding="10">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
@@ -133,8 +160,8 @@
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                                 <CollectionView.Footer>
-                                    <StackLayout Margin="0,0.5">
-                                        <Frame HasShadow="True" BorderColor="LightBlue" CornerRadius="10" BackgroundColor="Black" Padding="10">
+                                    <StackLayout Margin="0,0.5" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                                        <Frame HasShadow="True" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BorderColor="LightBlue" CornerRadius="10" BackgroundColor="Black" Padding="10">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="auto"></ColumnDefinition>
@@ -154,20 +181,26 @@
                         </RefreshView>
                     </StackLayout>
                 </xct:Expander>
-                
+
                 <StackLayout BackgroundColor="Transparent" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand" Padding="10,2" Margin="0" HeightRequest="55">
                     <Button Command="{Binding ClosedCommand}" Text="BACK" TextColor="White" FontSize="Subtitle" BackgroundColor="Crimson" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5">
                         <Button.ImageSource>
                             <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.ArrowAltCircleLeft}"></FontImageSource>
                         </Button.ImageSource>
                     </Button>
-                    <Button Command="{Binding SyncloadsheetCommand}" Text="SYNC LOADSHEET" FontSize="Subtitle" IsEnabled="{Binding Is_SelectTrack}" TextColor="White" BackgroundColor="ForestGreen" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5" IsVisible="{Binding IsHidebtnSync}">
+
+                    <Button Command="{Binding EditCommand}" Text="EDIT" TextColor="White" FontSize="Subtitle" BackgroundColor="{DynamicResource Primary}" IsVisible="{Binding Is_Hideeditbtn}" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.Pen}"></FontImageSource>
+                        </Button.ImageSource>
+                    </Button>
+                    <Button Command="{Binding SyncloadsheetCommand}" Text="{Binding Btn_SaveEdit}" FontSize="Subtitle" IsEnabled="{Binding Is_SelectTrack}" TextColor="White" BackgroundColor="ForestGreen" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5" IsVisible="{Binding IsHidebtnSync}">
                         <Button.ImageSource>
                             <FontImageSource FontFamily="FS" Size="Title" Glyph="{x:Static fontAwsome:FontAwesomeIcons.Save}"></FontImageSource>
                         </Button.ImageSource>
                     </Button>
                 </StackLayout>
             </StackLayout>
-        </AbsoluteLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

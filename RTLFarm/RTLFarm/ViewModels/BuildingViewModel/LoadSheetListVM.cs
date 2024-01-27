@@ -29,6 +29,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         GlobalDependencyServices _global = new GlobalDependencyServices();
 
         TunnelHeader _selecttunheader;
+        ExtendedPartialsHeader _selpartialheader;
         int _squencecount;
         string _loadsheetcode, _flockmanname, _newregister, _flockmancode, _statustitle;
         bool _isrefresh;
@@ -41,6 +42,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         public string Status_Title { get => _statustitle; set => SetProperty(ref _statustitle, value); }
 
         public TunnelHeader Select_TunHeader { get => _selecttunheader; set => SetProperty(ref _selecttunheader, value); }
+        public ExtendedPartialsHeader Sel_Partialheader { get => _selpartialheader; set => SetProperty(ref _selpartialheader, value); }
         public AsyncCommand RefreshCommand { get; set; }
         public AsyncCommand CreateLoadsheetCommand { get; set; }
         public AsyncCommand LogoutCommand { get; set; }
@@ -48,6 +50,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         public AsyncCommand<TunnelHeader> SpecSyncCommand { get; set; }
         public AsyncCommand SelectCommand { get; set; }
         public ObservableRangeCollection<TunnelHeader> TunnelHeader_List { get; set; }
+        public ObservableRangeCollection<ExtendedPartialsHeader> Partial_Header_List { get; set; }
         public ObservableRangeCollection<StatusType_Model> Status_List { get; set; }
         public Usermaster_Model User_Model = new Usermaster_Model();
 
@@ -73,6 +76,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             LogoutCommand = new AsyncCommand(OnLogout);
             TunnelHeader_List = new ObservableRangeCollection<TunnelHeader>();
             Status_List = new ObservableRangeCollection<StatusType_Model>();
+            Partial_Header_List = new ObservableRangeCollection<ExtendedPartialsHeader>();
 
             MessagingCenter.Subscribe<UpdateLSVM, string>(this, "parameterstring", async (page, e) =>
             {
@@ -106,8 +110,49 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             Status_Title = "STATUS";
             var _tunnelheaderList = await _global.tunnelheader.GetTunheaderbyflockman(_usercode);
             var _tunheadersortdate = _tunnelheaderList.OrderByDescending(a => a.DateAdded).ToList();
-            TunnelHeader_List.Clear();
-            TunnelHeader_List.ReplaceRange(_tunheadersortdate);
+            //TunnelHeader_List.Clear();
+            //TunnelHeader_List.ReplaceRange(_tunheadersortdate);
+
+            Partial_Header_List.Clear();
+            foreach(var _item in _tunheadersortdate)
+            {
+                if(_item.CancelledLoadSheet == "Edited")
+                {
+                    ExtendedPartialsHeader _extModel = new ExtendedPartialsHeader()
+                    {
+                        Partial_Header = _item,
+                        Status_Color = "#ff9933"
+                    };
+                    Partial_Header_List.Add(_extModel);
+                }
+                else if(_item.Load_Status == TokenCons.Closed)
+                {
+                    ExtendedPartialsHeader _extModel = new ExtendedPartialsHeader()
+                    {
+                        Partial_Header = _item,
+                        Status_Color = "ForestGreen"
+                    };
+                    Partial_Header_List.Add(_extModel);
+                }
+                else if (_item.Load_Status == TokenCons.IsCancel)
+                {
+                    ExtendedPartialsHeader _extModel = new ExtendedPartialsHeader()
+                    {
+                        Partial_Header = _item,
+                        Status_Color = "Crimson"
+                    };
+                    Partial_Header_List.Add(_extModel);
+                }
+                else
+                {
+                    ExtendedPartialsHeader _extModel = new ExtendedPartialsHeader()
+                    {
+                        Partial_Header = _item,
+                        Status_Color = "#2196F3"
+                    };
+                    Partial_Header_List.Add(_extModel);
+                }
+            }
         }
         private async Task OnSpecSyncapi(TunnelHeader _obj)
         {
@@ -403,32 +448,34 @@ namespace RTLFarm.ViewModels.BuildingViewModel
         private async Task OnSelectrow()
         {
 
-            if (Select_TunHeader == null)
+            if (Sel_Partialheader == null)
                 return;
+
+            var _headPar = Sel_Partialheader.Partial_Header;
 
             TunHeaderView _tunheaderview = new TunHeaderView()
             {
-                AGTId = Select_TunHeader.AGTId,
-                User = Select_TunHeader.User,
-                Plate_Number = Select_TunHeader.Plate_Number,
-                DateAdded = Select_TunHeader.DateAdded,
-                DateEdited = Select_TunHeader.DateEdited,
-                Status_Checked = Select_TunHeader.Status_Checked,
-                User_Checked = Select_TunHeader.User_Checked,
-                LoadDate = Select_TunHeader.LoadDate,
-                LoadNumber = Select_TunHeader.LoadNumber,
-                LoadSequence = Select_TunHeader.LoadSequence,
-                Load_Status = Select_TunHeader.Load_Status,
-                UserID = Select_TunHeader.UserID,
-                Building_Location = Select_TunHeader.Building_Location,
-                TruckDriverName = Select_TunHeader.TruckDriverName,
-                Override_Status = Select_TunHeader.Override_Status,
-                CSRefNo = Select_TunHeader.CSRefNo,
-                AndroidLoadSheet = Select_TunHeader.AndroidLoadSheet,
-                ReasonForReject = Select_TunHeader.ReasonForReject,
-                CancelledLoadSheet = Select_TunHeader.CancelledLoadSheet,
-                Remarks = Select_TunHeader.Remarks,
-                User_Code = Select_TunHeader.User_Code
+                AGTId = _headPar.AGTId,
+                User = _headPar.User,
+                Plate_Number = _headPar.Plate_Number,
+                DateAdded = _headPar.DateAdded,
+                DateEdited = _headPar.DateEdited,
+                Status_Checked = _headPar.Status_Checked,
+                User_Checked = _headPar.User_Checked,
+                LoadDate = _headPar.LoadDate,
+                LoadNumber = _headPar.LoadNumber,
+                LoadSequence = _headPar.LoadSequence,
+                Load_Status = _headPar.Load_Status,
+                UserID = _headPar.UserID,
+                Building_Location = _headPar.Building_Location,
+                TruckDriverName = _headPar.TruckDriverName,
+                Override_Status = _headPar.Override_Status,
+                CSRefNo = _headPar.CSRefNo,
+                AndroidLoadSheet = _headPar.AndroidLoadSheet,
+                ReasonForReject = _headPar.ReasonForReject,
+                CancelledLoadSheet = _headPar.CancelledLoadSheet,
+                Remarks = _headPar.Remarks,
+                User_Code = _headPar.User_Code
             };
 
             TokenSetGet.Set_Tunnel_Header(_tunheaderview);
@@ -508,5 +555,14 @@ namespace RTLFarm.ViewModels.BuildingViewModel
             var route = $"/{nameof(LoginPage)}";
             await Shell.Current.GoToAsync(route);
         }
+    }
+
+    public partial class ExtendedPartialsHeader : BaseViewModel
+    {
+        string _statusdesc, _statuscolor;
+        TunnelHeader _partialheader;
+        public TunnelHeader Partial_Header { get => _partialheader; set => SetProperty(ref _partialheader, value); }
+        public string Status_Desc { get => _statusdesc; set => SetProperty(ref _statusdesc, value); }
+        public string Status_Color { get => _statuscolor; set => SetProperty(ref _statuscolor, value); }
     }
 }

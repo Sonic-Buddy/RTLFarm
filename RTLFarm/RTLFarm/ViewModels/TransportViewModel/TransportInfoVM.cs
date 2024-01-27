@@ -1,4 +1,5 @@
-﻿using MvvmHelpers;
+﻿using Acr.UserDialogs;
+using MvvmHelpers;
 using MvvmHelpers.Commands;
 using Rg.Plugins.Popup.Services;
 using RTLFarm.Helpers;
@@ -92,7 +93,7 @@ namespace RTLFarm.ViewModels.TransportViewModel
         }
         private void OnGrandtotalegg(DateTime _productDate, string _loadsheet)
         {            
-            double _subtotal = 0;            
+            double _subtotal = 0;
             foreach (var _itm in TunnelDetails_List)
             {
                 _subtotal += _itm.Egg_Qty;
@@ -101,16 +102,26 @@ namespace RTLFarm.ViewModels.TransportViewModel
         }
         private async Task OnAcceptLS()
         {
+
+            var _loading = UserDialogs.Instance.Loading("Loading. . .");
+            _loading.Show();
             try
             {
                 bool _response = await _global.configurationService.GetInternetConnection();
                 if (!_response)
+                {
+                    _loading.Dispose();
                     return;
+                }
+                    
 
 
                 bool _confirmation = await App.Current.MainPage.DisplayAlert("Message Alert", $"You're sure to accept this {GrandTotal_Egg} eggs?", "Yes", "No");
                 if (_confirmation == false)
+                {
+                    _loading.Dispose();
                     return;
+                }
 
                 TunnelHeader _tunnelheader = new TunnelHeader()
                 {
@@ -141,11 +152,12 @@ namespace RTLFarm.ViewModels.TransportViewModel
                 if (_Isexistapi != 0)
                 {
                     await _global.configurationService.MessageAlert("Somethings is missing");
+                    _loading.Dispose();
                     return;
                 }
 
                 await _global.tunnelheader.Update_TunnelHeaderStatus(_tunnelheader);
-                await _global.tunnelheader.PutapiHeader(_tunnelheader);
+                await _global.tunnelheader.PutapiHeader(_tunnelheader, "Update_Status");
 
                 var _tundetailsList = await _global.tunneldetails.GetTunneldetailsproduction(_tunnelheader.LoadDate, _tunnelheader.AndroidLoadSheet);
                 foreach (var _itmdetails in _tundetailsList)
@@ -172,12 +184,14 @@ namespace RTLFarm.ViewModels.TransportViewModel
 
 
                 await OnSyncuserlog();
+                _loading.Dispose();
                 await _global.configurationService.MessageAlert("Successfully accepted");
                 await OnClose();
             }
             catch (Exception ex)
             {
                 await _global.configurationService.MessageAlert(ex.Message);
+                _loading.Dispose();
                 return;
             }
 
