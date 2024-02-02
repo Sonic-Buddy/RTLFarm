@@ -330,7 +330,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                     AndroidLoadSheet = _obj.AndroidLoadSheet
                 };
 
-                var _Isexistapi = await _global.tunnelheader.GetExistloadsheet(_tunnelheader);
+                var _Isexistapi = await _global.tunnelheader.GetExistloadsheet(_tunnelheader, _tunnelheader.TruckDriverName);
                 if (_Isexistapi != 0)
                 {
                     await _global.configurationService.MessageAlert("Somethings is missing");

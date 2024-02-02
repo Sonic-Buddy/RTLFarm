@@ -53,7 +53,7 @@ namespace RTLFarm
 
         public static HttpClient GetSecondClient()
         {
-            string _baseURL = "http://sonicsales.net:2004";
+            string _baseURL = "http://192.168.1.120:2004/";
             HttpClient _client = new HttpClient();
             _client.BaseAddress = new Uri(_baseURL);
             _client.DefaultRequestHeaders.Accept.Clear();

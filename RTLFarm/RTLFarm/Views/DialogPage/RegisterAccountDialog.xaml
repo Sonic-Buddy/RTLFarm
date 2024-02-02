@@ -18,13 +18,13 @@
     <Frame HeightRequest="300" 
            Margin="20"
            VerticalOptions="CenterAndExpand" 
-           HorizontalOptions="FillAndExpand"
+           HorizontalOptions="CenterAndExpand"
            BackgroundColor="White"
            CornerRadius="10"
            Padding="15"
            >
 
-        <StackLayout HorizontalOptions="Center" VerticalOptions="Center" >
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
             <!--Register Data-->
             <StackLayout IsVisible="{Binding Show_Register}">
                 <Label Text="CREATE ACCOUNT" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" FontSize="Title" TextColor="Black" />

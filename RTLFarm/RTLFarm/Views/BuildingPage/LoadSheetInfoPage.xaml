@@ -78,7 +78,6 @@
 
                 <!---->
                     
-                    
                 <xct:Expander IsExpanded="True" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" IsVisible="{Binding Is_Hidereason}">
                     <xct:Expander.Header>
                         <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="5,0" BackgroundColor="Transparent" Padding="3">

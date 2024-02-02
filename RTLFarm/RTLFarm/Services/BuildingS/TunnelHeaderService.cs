@@ -91,9 +91,12 @@ namespace RTLFarm.Services.BuildingS
             return _tunheaderList;
         }
 
-        public Task<int> Getexistcount(DateTime _productionDate, string _building, string _loadsheet)
+        public async Task<int> Getexistcount(string _building, string _loadsheet)
         {
-            throw new NotImplementedException();
+            await DbCon();
+            var _masterlist = await db.Table<TunnelHeader>().ToListAsync();
+            var _returncount = _masterlist.Where(a => a.TruckDriverName == _building || a.TruckDriverName == "NDT" && a.AndroidLoadSheet == _loadsheet).Count();
+            return _returncount;
         }
 
         public async Task<int> GetExistloadsheet(string _loadsheet)
@@ -104,12 +107,12 @@ namespace RTLFarm.Services.BuildingS
             return _returncount;
         }
 
-        public async Task<int> GetExistloadsheet(TunnelHeader _obj)
+        public async Task<int> GetExistloadsheet(TunnelHeader _obj, string _usercode)
         {
             await DbCon();
             var _masterlist = await db.Table<TunnelHeader>().ToListAsync();
-            var _userList = _masterlist.Where(a => a.User_Code == _obj.User_Code && a.LoadDate.Date == _obj.LoadDate.Date).ToList();
-            var _returnCount = _userList.Where(b => b.AndroidLoadSheet == _obj.AndroidLoadSheet && b.Load_Status == _obj.Load_Status).Count();
+            var _userList = _masterlist.Where(a => a.TruckDriverName == _usercode && a.LoadDate.Date == _obj.LoadDate.Date).ToList();
+            var _returnCount = _userList.Where(b => b.AndroidLoadSheet == _obj.AndroidLoadSheet).Count();
             return _returnCount;
         }
 
@@ -127,6 +130,15 @@ namespace RTLFarm.Services.BuildingS
             var _masterlist = await db.Table<TunnelHeader>().ToListAsync();
             var _returncount = _masterlist.Where(a => a.LoadDate.Date == _productionDate.Date).Count();
             return _returncount;
+        }
+
+        public async Task<TunnelHeader> GetserverModel(string _androidLS, string _usercode)
+        {
+            var client = ConfigurationClass.GetClient();
+            var json = await client.GetStringAsync("api/AG_TunnelProd/");
+            var _tunheaderList = JsonConvert.DeserializeObject<IEnumerable<TunnelHeader>>(json);
+            var _returnModel = _tunheaderList.Where(a => a.AndroidLoadSheet == _androidLS && a.User_Code == _usercode).FirstOrDefault();
+            return _returnModel;
         }
 
         public async Task<int> GetSpecificcount(DateTime _productionDate, string _flockmanCode, string _building)
@@ -159,9 +171,11 @@ namespace RTLFarm.Services.BuildingS
                     return _onsyncnupdate;
 
                 case "OnDriverView":
+                    //var _primeList = _masterList.Where(a => a.TruckDriverName == _obj.TruckDriverName || a.TruckDriverName == "NDT").ToList();
                     var _ondriverview = _masterList.Where(b => b.Load_Status == TokenCons.IsProcessing || b.Load_Status == TokenCons.IsForTrans || b.Load_Status == TokenCons.IsCancel).ToList();
-                    var _statusList = _ondriverview.Where(c => !string.IsNullOrWhiteSpace(c.Plate_Number) || !string.IsNullOrWhiteSpace(c.Plate_Number)).ToList();
+                    var _statusList = _ondriverview.Where(c => c.TruckDriverName == _obj.TruckDriverName || c.TruckDriverName == "NDT").ToList();
                     return _statusList;
+
             }
         }
 
@@ -212,8 +226,8 @@ namespace RTLFarm.Services.BuildingS
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             if(_foredit == "For_Edit")
-            {
-                var response = await client.PutAsync($"api/AG_TunnelProd/{_obj.AGTId}", content);
+            {                
+                var response = await client.PutAsync($"api/AG_TunnelProd/PutLoadNumber/{_obj.LoadNumber}/{_obj.AndroidLoadSheet}", content);
                 _ = response.Content.ReadAsStringAsync().Result;
             }
             else
@@ -226,8 +240,9 @@ namespace RTLFarm.Services.BuildingS
         public async Task<TunnelHeader> Update_TunHeader(TunnelHeader _obj)
         {
             await DbCon();
-            var _up = await db.Table<TunnelHeader>().Where(a => a.User_Code == _obj.User_Code && a.AndroidLoadSheet == _obj.AndroidLoadSheet).FirstOrDefaultAsync();
+            var _up = await db.Table<TunnelHeader>().Where(a => a.AndroidLoadSheet == _obj.AndroidLoadSheet).FirstOrDefaultAsync();
             _up.AGTId = _obj.AGTId;
+            _up.User_Code = _obj.User_Code;
             _up.User = _obj.User;
             _up.Status_Checked = _obj.Status_Checked;
             _up.User_Checked = _obj.User_Checked;
@@ -240,7 +255,6 @@ namespace RTLFarm.Services.BuildingS
             _up.DateEdited = _obj.DateEdited;
             _up.UserID = _obj.UserID;
             _up.Building_Location = _up.Building_Location;
-            _up.TruckDriverName = _obj.TruckDriverName;
             _up.Override_Status = _obj.Override_Status;
             _up.CSRefNo = _obj.CSRefNo;
             _up.ReasonForReject = _obj.ReasonForReject;
@@ -272,23 +286,35 @@ namespace RTLFarm.Services.BuildingS
             _up.CSRefNo = _obj.CSRefNo;
             _up.ReasonForReject = _obj.ReasonForReject;
             _up.CancelledLoadSheet = _obj.CancelledLoadSheet;
-            _up.Remarks = _obj.Remarks;            
+            _up.Remarks = _obj.Remarks;
+            _up.User_Code = _obj.User_Code;
+            
 
             _ = await db.UpdateAsync(_up);
         }
         public async Task Update_TunnelHeaderStatus(TunnelHeader _obj)
         {
             await DbCon();
-            var _up = await db.Table<TunnelHeader>().Where(a => a.AGTId == _obj.AGTId && a.User_Code == _obj.User_Code && a.AndroidLoadSheet == _obj.AndroidLoadSheet).FirstOrDefaultAsync();
-               
+            var _up = await db.Table<TunnelHeader>().Where(a => a.User_Code == _obj.User_Code && a.AndroidLoadSheet == _obj.AndroidLoadSheet).FirstOrDefaultAsync();
+
+            _up.User = _obj.User;
+            _up.Status_Checked = _obj.Status_Checked;
             _up.Plate_Number = _obj.Plate_Number;
             _up.LoadDate = _obj.LoadDate;
-            _up.LoadNumber = _obj.LoadNumber;
             _up.LoadSequence = _obj.LoadSequence;
+            _up.LoadNumber = _obj.LoadNumber;
             _up.Load_Status = _obj.Load_Status;
+            _up.DateAdded = _obj.DateAdded;
+            _up.DateEdited = _obj.DateEdited;
+            _up.UserID = _obj.UserID;
+            _up.Building_Location = _up.Building_Location;
+            _up.TruckDriverName = _obj.TruckDriverName;
+            _up.Override_Status = _obj.Override_Status;
+            _up.CSRefNo = _obj.CSRefNo;
             _up.ReasonForReject = _obj.ReasonForReject;
             _up.CancelledLoadSheet = _obj.CancelledLoadSheet;
             _up.Remarks = _obj.Remarks;
+            _up.User_Code = _obj.User_Code;
 
             _ = await db.UpdateAsync(_up);
         }

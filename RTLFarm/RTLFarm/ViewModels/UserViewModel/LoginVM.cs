@@ -117,6 +117,8 @@ namespace RTLFarm.ViewModels.UserViewModel
                 //Username = "proi113";
                 Username = "user101";
                 Password = "1234";
+                Verification = "FdRt2313";
+                //Verification = "AADS4144";
 
                 IsRegister = Preferences.Get("iSregistered", false);
 

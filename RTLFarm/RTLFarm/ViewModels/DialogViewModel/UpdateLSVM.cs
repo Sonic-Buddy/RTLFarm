@@ -68,7 +68,7 @@ namespace RTLFarm.ViewModels.DialogViewModel
                         AndroidLoadSheet = _itmheader.AndroidLoadSheet
                     };
 
-                    var _Isexistapi = await _global.tunnelheader.GetExistloadsheet(_tunnelheader);
+                    var _Isexistapi = await _global.tunnelheader.GetExistloadsheet(_tunnelheader, _tunnelheader.TruckDriverName);
                     if (_Isexistapi != 0)
                     {
                         MessagingCenter.Send(this, "parameterstring", "somethings is missing");

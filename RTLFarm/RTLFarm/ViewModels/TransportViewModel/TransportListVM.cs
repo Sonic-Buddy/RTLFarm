@@ -36,6 +36,7 @@ namespace RTLFarm.ViewModels.TransportViewModel
         public AsyncCommand SyncCommand { get; set; }
 
         public ObservableRangeCollection<TunnelHeader> TunnelHeader_List { get; set; }
+        public ObservableRangeCollection<Grouping<string, TunnelHeader>> GRTunnelHeader_List { get; set; }
         public Usermaster_Model User_Model = new Usermaster_Model();
 
         public TransportListVM()
@@ -44,7 +45,7 @@ namespace RTLFarm.ViewModels.TransportViewModel
             SelectCommand = new AsyncCommand(OnSelectrow);
             SyncCommand = new AsyncCommand(OnSyncapi);
             LogoutCommand = new AsyncCommand(OnLogout);
-
+            GRTunnelHeader_List = new ObservableRangeCollection<Grouping<string, TunnelHeader>>();
             TunnelHeader_List = new ObservableRangeCollection<TunnelHeader>();
         }
 
@@ -57,7 +58,9 @@ namespace RTLFarm.ViewModels.TransportViewModel
                 User_Model = await _global.loginService.GetSpecificmodel(New_Register);
                 Driver_Code = User_Model.SalesmanCode;
                 Driver_Name = User_Model.UserFullName;
-                await OnLoadData(User_Model.SalesmanCode);
+
+                //string _userRole = await _global.loginService.Getuserrole();
+                await OnLoadData();
 
                 IsRefresh = false;
             }
@@ -68,19 +71,22 @@ namespace RTLFarm.ViewModels.TransportViewModel
             }
         }
 
-        private async Task OnLoadData(string _drivercode)
+        private async Task OnLoadData()
         {
             try
             {
+                
                 TunnelHeader _tunheaderparam = new TunnelHeader()
                 {
-                    User_Checked = _drivercode
+                    TruckDriverName = Driver_Code
                 };
                 var _driverviewList = await _global.tunnelheader.GetSpecifictunheader(_tunheaderparam, "OnDriverView");
-                var _harvestList = await GetHarvestList(_driverviewList.ToList());
-                var _tundetialssortdate = _harvestList.OrderByDescending(a => a.DateAdded).ToList();
-                TunnelHeader_List.Clear();
-                TunnelHeader_List.ReplaceRange(_tundetialssortdate);
+                var _tundetialssortdate = _driverviewList.OrderByDescending(a => a.DateAdded).ToList();
+            
+                GRTunnelHeader_List.Clear();
+                GRTunnelHeader_List.Add(new Grouping<string, TunnelHeader>(TokenCons.IsProcessing, _tundetialssortdate.Where(a => a.TruckDriverName == "NDT" && a.Load_Status == TokenCons.IsProcessing)));
+                GRTunnelHeader_List.Add(new Grouping<string, TunnelHeader>(TokenCons.IsForTrans, _tundetialssortdate.Where(a => a.TruckDriverName == Driver_Code && a.Load_Status == TokenCons.IsForTrans)));
+                GRTunnelHeader_List.Add(new Grouping<string, TunnelHeader>(TokenCons.IsCancel, _tundetialssortdate.Where(a => a.TruckDriverName == Driver_Code && a.Load_Status == TokenCons.IsCancel)));
             }
             catch (Exception ex)
             {
@@ -109,7 +115,8 @@ namespace RTLFarm.ViewModels.TransportViewModel
 
                 foreach (var _itmHeader in _tunheaderapiList)
                 {
-                    var _isExistcount = await _global.tunnelheader.GetExistloadsheet(_itmHeader);
+
+                    var _isExistcount = await _global.tunnelheader.GetExistloadsheet(_itmHeader, _itmHeader.TruckDriverName);
                     if (_isExistcount == 0)
                     {
                         var _tunheaderModel = await _global.tunnelheader.Insert_TunnelHeader(_itmHeader);
@@ -132,7 +139,7 @@ namespace RTLFarm.ViewModels.TransportViewModel
 
                 await Task.Delay(2000);
 
-                await OnLoadData(User_Model.SalesmanCode);
+                await OnLoadData();
                 await OnAddlogs(User_Model.SalesmanCode, User_Model.UserFullName, User_Model.UserRole, "Sync", $"Successfully Sync (Header count :{_tunheaderapiList.Count()})", TokenCons.IsSuccess);
                 _loading.Dispose();
             }

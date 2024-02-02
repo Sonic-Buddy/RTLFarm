@@ -16,6 +16,7 @@ namespace RTLFarm.Services.UserS
         Task<Usermaster_Model> GetSpecificAccount(string _username, string _password);
         Task<Usermaster_Model> GetAccountspecificmodel(string _userverifycode);
         Task<string> Getuserinformation(string _userverifyCode, string _type);
+        Task<string> Getuserrole(string _usercode);
         Task<int> GetExistcount(int _serverId, string _flockmanCode);
         Task<Usermaster_Model> GetActiveaccount();
         Task<Usermaster_Model> Getapioveridelogin(Usermaster_Model _obj);

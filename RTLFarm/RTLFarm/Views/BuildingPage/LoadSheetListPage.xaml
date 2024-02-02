@@ -153,28 +153,28 @@
                 <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="FillAndExpand" Orientation="Horizontal" Margin="0" Padding="0" BackgroundColor="Transparent">
                     <Path Fill="#2196F3" Stroke="Black">
                         <Path.Data>
-                            <EllipseGeometry Center="15,15" RadiusX="10" RadiusY="10" />
+                            <EllipseGeometry Center="11,11" RadiusX="8" RadiusY="8" />
                         </Path.Data>
                     </Path>
-                    <Label Text="PROCESSING     "  TextColor="{DynamicResource DMSecond}" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
+                    <Label Text="PROCESSING     "  TextColor="{DynamicResource DMSecond}" FontSize="Micro" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
                     <Path Fill="Forestgreen" Stroke="Black">
                         <Path.Data>
-                            <EllipseGeometry Center="15,15" RadiusX="10" RadiusY="10" />
+                            <EllipseGeometry Center="11,11" RadiusX="8" RadiusY="8" />
                         </Path.Data>
                     </Path>
-                    <Label Text="CLOSED     "  TextColor="{DynamicResource DMSecond}" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
+                    <Label Text="CLOSED     "  TextColor="{DynamicResource DMSecond}" FontSize="Micro" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
                     <Path Fill="#ff9933" Stroke="Black">
                         <Path.Data>
-                            <EllipseGeometry Center="15,15" RadiusX="10" RadiusY="10" />
+                            <EllipseGeometry Center="11,11" RadiusX="8" RadiusY="8" />
                         </Path.Data>
                     </Path>
-                    <Label Text="EDITED     "  TextColor="{DynamicResource DMSecond}" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
+                    <Label Text="EDITED     "  TextColor="{DynamicResource DMSecond}" FontSize="Micro" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
                     <Path Fill="crimson" Stroke="Black">
                         <Path.Data>
-                            <EllipseGeometry Center="15,15" RadiusX="10" RadiusY="10" />
+                            <EllipseGeometry Center="11,11" RadiusX="8" RadiusY="8" />
                         </Path.Data>
                     </Path>
-                    <Label Text="CANCELLED      "  TextColor="{DynamicResource DMSecond}" FontSize="Medium" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
+                    <Label Text="CANCELLED      "  TextColor="{DynamicResource DMSecond}" FontSize="Micro" FontAttributes="Bold" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"/>
                 </StackLayout>
                 <StackLayout BackgroundColor="Transparent" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand" Padding="10,5" Margin="0" HeightRequest="55">                    
                     <Button Command="{Binding LogoutCommand}" Text="LOGOUT" TextColor="White" BackgroundColor="Crimson" FontSize="Subtitle" FontFamily="FS" HorizontalOptions="FillAndExpand" Padding="20,0,0,0" Margin="0" CornerRadius="5">

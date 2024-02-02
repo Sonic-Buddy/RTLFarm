@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
 using RTLFarm.Helpers;
-using RTLFarm.Models.StatusModel;
 using RTLFarm.Models.UserModel;
-using RTLFarm.Services.OthersS;
 using RTLFarm.Services.UserS;
 using SQLite;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -79,7 +76,6 @@ namespace RTLFarm.Services.UserS
             var _usermaster = JsonConvert.DeserializeObject<IEnumerable<Usermaster_Model>>(json);
             var _returnModel = _usermaster.Where(a => a.SalesmanCode == _usersalescode).FirstOrDefault();
             return _returnModel;
-
         }
 
         public async Task<int> GetExistcount(int _serverId, string _flockmanCode)
@@ -130,6 +126,14 @@ namespace RTLFarm.Services.UserS
             await DbCon();
             var user = await db.Table<Usermaster_Model>().Where(x => x.UserName == _username && x.Password == _password).ToListAsync();
             return user;
+        }
+
+        public async Task<string> Getuserrole(string _usercode)
+        {
+            await DbCon();
+            var _masterList = await db.Table<Usermaster_Model>().ToListAsync();
+            var _returnModel = _masterList.Where(a => a.SalesmanCode == _usercode).FirstOrDefault();
+            return _returnModel.UserRole;
         }
 
         public async Task<int> GetVerifyuser(string _usersalescode)

@@ -160,7 +160,14 @@ namespace RTLFarm.ViewModels.BuildingViewModel
 
             var _masterlist = await _global.reasons.GetSpecificList("DRIVER");
             Reason_List.Clear();
-            Reason_List.ReplaceRange(_masterlist);
+
+            foreach(var _item in _masterlist)
+            {
+                if(_item.ReasonCodeType == "17003" || _item.ReasonCodeType == "17004")
+                {
+                    Reason_List.Add(_item);
+                }
+            }
 
             IsClose_Status = true;
             IsHidebtnSync = true;
@@ -220,6 +227,8 @@ namespace RTLFarm.ViewModels.BuildingViewModel
 
         private async Task OnSpecSyncapi()
         {
+
+            DateTime _todayDate = DateTime.Now;
             var _loading = UserDialogs.Instance.Loading("Uploading Data. . .");
             _loading.Show();
             try
@@ -250,34 +259,58 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                         return;
                     }
 
+                    var _apiModel = await _global.tunnelheader.GetserverModel(TunHeader.AndroidLoadSheet, TunHeader.User_Code);
+
                     string _conbineError = $"{ReasonType}--{Remarks_Editor}";
 
                     TunnelHeader _tunnelheader = new TunnelHeader()
                     {
-                        AGTId = TunHeader.AGTId,
-                        User = TunHeader.User,
+                        AGTId = _apiModel.AGTId,
+                        User = _apiModel.User,
                         Plate_Number = Plate_Number,
-                        DateAdded = TunHeader.DateAdded,
-                        Status_Checked = TunHeader.Status_Checked,
-                        DateEdited = TunHeader.DateEdited,
-                        User_Checked = TunHeader.User_Checked,
-                        LoadDate = TunHeader.LoadDate,
-                        LoadNumber = TunHeader.LoadNumber,
-                        LoadSequence = TunHeader.LoadSequence,
+                        DateAdded = _apiModel.DateAdded,
+                        Status_Checked = _apiModel.Status_Checked,
+                        DateEdited = _apiModel.DateEdited,
+                        User_Checked = _apiModel.User_Checked,
+                        LoadDate = _apiModel.LoadDate,
+                        LoadNumber = _apiModel.LoadNumber,
+                        LoadSequence = _apiModel.LoadSequence,
                         Load_Status = TokenCons.IsProcessing,
-                        UserID = TunHeader.UserID,
-                        Building_Location = TunHeader.Building_Location,
-                        TruckDriverName = TunHeader.TruckDriverName,
-                        Override_Status = TunHeader.Override_Status,
-                        CSRefNo = TunHeader.CSRefNo,
-                        AndroidLoadSheet = TunHeader.AndroidLoadSheet,
-                        ReasonForReject = TunHeader.ReasonForReject,
+                        UserID = _apiModel.UserID,
+                        Building_Location = _apiModel.Building_Location,
+                        TruckDriverName = "NDT",
+                        Override_Status = _apiModel.Override_Status,
+                        CSRefNo = _apiModel.CSRefNo,
+                        AndroidLoadSheet = _apiModel.AndroidLoadSheet,
+                        ReasonForReject = _apiModel.ReasonForReject,
                         CancelledLoadSheet = "Edited",
                         Remarks = _conbineError,
-                        User_Code = TunHeader.User_Code
+                        User_Code = _apiModel.User_Code
                     };
 
                     await _global.tunnelheader.PutapiHeader(_tunnelheader, "For_Edit");
+                    var _tundetailsList = await _global.tunneldetails.GetTunneldetailsproduction(_tunnelheader.LoadDate, _tunnelheader.AndroidLoadSheet);
+                    foreach (var _itmdetails in _tundetailsList)
+                    {
+                        TunnelDetails _tunnedetails = new TunnelDetails()
+                        {
+                            LoadNumber = _tunnelheader.LoadNumber,
+                            Egg_Qty = _itmdetails.Egg_Qty,
+                            Egg_StatType = _itmdetails.Egg_StatType,
+                            Load_Status = TokenCons.IsProcessing,
+                            DateCreated = _itmdetails.DateCreated,
+                            DateUpdated = _itmdetails.DateUpdated,
+                            Remarks = _itmdetails.Remarks,
+                            Egg_Location = _itmdetails.Egg_Location,
+                            Production_Date = _itmdetails.Production_Date,
+                            Sequence = _itmdetails.Sequence,
+                            UserSequence = _itmdetails.UserSequence,
+                            AndroidLoadSheet = _tunnelheader.AndroidLoadSheet
+                        };
+
+                        await _global.tunneldetails.PutapiDetails(_tunnedetails);
+                    }
+
                     await OnUpdateproduction(_tunnelheader);
                     await OnAddlogs(TokenSetGet.Get_UserModel().SalesmanCode, TokenSetGet.Get_UserModel().UserFullName, TokenSetGet.Get_UserModel().UserRole, "Edit", $"Successfully edit loadsheet {_tunnelheader.AndroidLoadSheet}/{_tunnelheader.LoadNumber}", _tunnelheader.Load_Status);
                     await OnSyncuserlog();
@@ -322,7 +355,7 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                         Load_Status = TokenCons.IsProcessing,
                         UserID = TunHeader.UserID,
                         Building_Location = TunHeader.Building_Location,
-                        TruckDriverName = TunHeader.TruckDriverName,
+                        TruckDriverName = "NDT",
                         Override_Status = TunHeader.Override_Status,
                         CSRefNo = TunHeader.CSRefNo,
                         AndroidLoadSheet = TunHeader.AndroidLoadSheet,
@@ -525,6 +558,12 @@ namespace RTLFarm.ViewModels.BuildingViewModel
                 DateTime _todayDate = DateTime.Now.AddDays(-1);
                 var _logmasterlist = await _global.logsService.Getlogsmasterlist();
                 var _sortdatalist = _logmasterlist.Where(a => a.Logs_Create.Date > _todayDate.Date).ToList();
+
+                if(_sortdatalist.Count() == 0)
+                {
+                    await OnClose();
+                    return;
+                }
 
                 foreach (var _item in _sortdatalist)
                 {

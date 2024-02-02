@@ -7,6 +7,7 @@ using RTLFarm.Models.ConfigurationModel;
 using RTLFarm.Models.OthersModel;
 using RTLFarm.Models.TunnelDummy;
 using RTLFarm.Models.TunnelModel;
+using RTLFarm.Models.UserModel;
 using RTLFarm.Services;
 using RTLFarm.ViewModels.DialogViewModel;
 using RTLFarm.Views.DialogPage;
@@ -33,6 +34,8 @@ namespace RTLFarm.ViewModels.TransportViewModel
         public bool Is_BtnHide { get => _isbtnhide; set => SetProperty(ref _isbtnhide, value); }
         public double GrandTotal_Egg { get => _grandtotalegg; set => SetProperty(ref _grandtotalegg, value); }
         public string Building_Location { get => _buildinglocation; set => SetProperty(ref _buildinglocation, value); }
+        public string Userna { get => _buildinglocation; set => SetProperty(ref _buildinglocation, value); }
+        
 
         public AsyncCommand RefreshCommand { get; set; }
         public AsyncCommand ClosedCommand { get; set; }
@@ -40,6 +43,7 @@ namespace RTLFarm.ViewModels.TransportViewModel
         public AsyncCommand RejectCommand { get; set; }
 
         public ObservableRangeCollection<TunnelDetails> TunnelDetails_List { get; set; }
+        public Usermaster_Model User_Model = new Usermaster_Model();
 
         public TransportInfoVM()
         {
@@ -64,6 +68,7 @@ namespace RTLFarm.ViewModels.TransportViewModel
                 IsRefresh = true;
                 Is_BtnHide = false;
                 TunHeader = TokenSetGet.Get_Tunnel_Header();
+                User_Model =  TokenSetGet.Get_UserModel();
 
                 Building_Location = await _global.buildinglocation.GetBuildingLocation(TunHeader.Building_Location, "Description");
 
@@ -113,8 +118,6 @@ namespace RTLFarm.ViewModels.TransportViewModel
                     _loading.Dispose();
                     return;
                 }
-                    
-
 
                 bool _confirmation = await App.Current.MainPage.DisplayAlert("Message Alert", $"You're sure to accept this {GrandTotal_Egg} eggs?", "Yes", "No");
                 if (_confirmation == false)
@@ -131,14 +134,14 @@ namespace RTLFarm.ViewModels.TransportViewModel
                     DateAdded = TunHeader.DateAdded,
                     DateEdited = TunHeader.DateEdited,
                     Status_Checked = TunHeader.Status_Checked,
-                    User_Checked = TunHeader.User_Checked,
+                    User_Checked = User_Model.UserFullName,
                     LoadDate = TunHeader.LoadDate,
                     LoadNumber = TunHeader.LoadNumber,
                     LoadSequence = TunHeader.LoadSequence,
                     Load_Status = TokenCons.IsForTrans,
                     UserID = TunHeader.UserID,
                     Building_Location = TunHeader.Building_Location,
-                    TruckDriverName = TunHeader.TruckDriverName,
+                    TruckDriverName = User_Model.SalesmanCode,
                     Override_Status = TunHeader.Override_Status,
                     CSRefNo = TunHeader.CSRefNo,
                     AndroidLoadSheet = TunHeader.AndroidLoadSheet,
@@ -210,13 +213,26 @@ namespace RTLFarm.ViewModels.TransportViewModel
         }
         private async Task OnSyncuserlog()
         {
-            DateTime _todayDate = DateTime.Now.AddDays(-1);
-            var _logmasterlist = await _global.logsService.Getlogsmasterlist();
-            var _sortdatalist = _logmasterlist.Where(a => a.Logs_Create.Date > _todayDate.Date).ToList();
-            foreach (var _item in _sortdatalist)
+            try
             {
-                await _global.logsService.Postlogs_API(_item);
+                DateTime _todayDate = DateTime.Now.AddDays(-1);
+                var _logmasterlist = await _global.logsService.Getlogsmasterlist();
+                var _sortdatalist = _logmasterlist.Where(a => a.Logs_Create.Date > _todayDate.Date).ToList();
+
+                if(_sortdatalist.Count() == 0)
+                {
+                    return;
+                }
+
+                foreach (var _item in _sortdatalist)
+                {
+                    await _global.logsService.Postlogs_API(_item);
+                }
             }
+            catch
+            {
+                throw new Exception();
+            }            
         }
         private async Task OnClose()
         {
